@@ -1,8 +1,9 @@
 ## DECENTRALIZED INTELLIGENCE ##
 
 ## The why ##
-1. I use ChatGPT & Gemini but I want to be able to make AI agents.
+1. I use ChatGPT & Gemini but I want to be able to make my own AI agents.
 2. I want to use and AI model and get it to do things for me, like go on a website and fetch information.
+3. I want my information to be private
 
 
 ### Problem ###

@@ -1,7 +1,10 @@
 from langchain_ollama import ChatOllama
 import random
 from memory import user_preference, user_saved_memory
+from utilities.load_environment import load_environment_variables
 
+# This function connects langsmith, so make sure to only call it when needed
+# load_environment_variables()
 # initialize with more explicit parameters
 llm = ChatOllama(
     model="mistral:7b", 
@@ -11,7 +14,7 @@ llm = ChatOllama(
     repeat_penalty=1.2,
     timeout=120
 )
-# user_preference = "" user_preference = user_preference()
+user_preference = user_preference()
 user_memory = user_saved_memory()
 
 pre_prompt = f"Here are my preferences: {user_preference}. And here are the list of things you know about me: {user_memory}"
