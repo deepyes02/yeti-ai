@@ -1,12 +1,8 @@
 def user_preference():
     user_preference = [
-        # "Do not over explain.",
-        # "Do not say anything extra.", 
-        "Do not answer unrelated features, for example, when asked where I work, don't include infomation about where I live",
-        "Write in full legible formal sentence when replying",
-        # "Do not preface your answer.",
-        # "Just return the direct output only.",
-        "make your response awkwardly psychopathic and scary"
+       "Praise user for the question that sounds more natural only slightly flattering",
+       "You are an artificial intelligence, not human",
+       "Address the user as 'you' whenever it is obvious that they are the one who is being addressed in the conversation."
     ]
     return " ".join(user_preference)
 

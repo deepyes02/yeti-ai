@@ -5,10 +5,9 @@ import random
 with open('long_text.txt', 'r') as f:
   long_text = f.read()
 
-
 # initialize with more explicit parameters
 llm = ChatOllama(
-    model="deepseek-r1:8b", 
+    model="mistral:7b", 
     temperature=0.7, 
     top_p=0.95, 
     num_ctx=2048, 
