@@ -12,7 +12,6 @@ llm = ChatOllama(
     top_p=0.95, 
     num_ctx=2048, 
     repeat_penalty=1.2,
-    timeout=120
 )
 # user_preference = user_preference()
 # user_memory = user_saved_memory()
