@@ -39,5 +39,10 @@ POST http://localhost:8000/chat
   "prompt": "Tell me a joke"
 }
 ```
-
+#### The response is also JSON
+```json
+{
+  "response": "Here's one:\n\nWhat do you call a fake noodle?\n\nAn impasta.\n\n(I hope that made your day!) Do want to hear another? I have plenty of them! :) )"
+}
+```
 
