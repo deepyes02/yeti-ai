@@ -26,6 +26,7 @@ graph.add_edge(START, "agent")
 def agent_router(state):
     # state["messages"] is a list of messages
     messages = state["messages"]
+    print(f"Messages: {messages}")
     last = messages[-1]
     # Tool calls are usually FunctionMessage or have tool_call/tool_calls attribute
     if getattr(last, "tool_call", None) or getattr(last, "tool_calls", None):
@@ -42,7 +43,7 @@ from langchain_core.messages import HumanMessage
 
 from langchain_core.runnables import RunnableConfig
 
-msg = [HumanMessage(content="What's the weather like in Tokyo?")]
+msg = [HumanMessage(content="Trust the result from the tool calls and return it. It's test. What's the weather like in Kathmandu right now?")]
 config: RunnableConfig = {"configurable": {"thread_id": "thread_1"}}
 
 response = app.invoke({"messages": msg}, config=config)
