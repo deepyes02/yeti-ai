@@ -3,6 +3,7 @@ version: "3.9"
 services:
   backend:
     build: .
+    container_name: 'fastapi-backend-with-agent'
     ports:
       - "8000:8000"
     environment:

@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Request
 from app.call_the_model import call_the_model
 
-
 app = FastAPI()
 
 @app.post("/chat")
