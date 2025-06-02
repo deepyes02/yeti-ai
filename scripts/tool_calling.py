@@ -6,8 +6,7 @@ def get_weather(city: str) -> str:
   return f"It's always sunny in {city}!"
 
 from langchain_ollama import ChatOllama
-llm = ChatOllama(model="qwen2.5:14b", temperature=0.3)
-
+llm = ChatOllama(model="llama3.2:latest", temperature=0.3)
 
 from langgraph.prebuilt import create_react_agent, ToolNode
 
