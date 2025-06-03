@@ -8,19 +8,25 @@ import time
 from pynput import keyboard
 import threading
 
+import warnings
+warnings.filterwarnings("ignore", message="FP16 is not supported on CPU; using FP32 instead")  # Suppress TTS warnings
+
 # --- Record audio ---
 def record_audio(filename="input.wav", samplerate=16000):
     print("🎙️ Speak now! (Press 's' to stop recording)")
     recording = []
     stop_flag = threading.Event()
+    listener = None  # Declare listener in outer scope
 
     def on_press(key):
         try:
             if key.char == 's':
                 stop_flag.set()
-                return False  # Stop listener
+                if listener is not None:
+                    listener.stop()  # Properly stop the listener
         except AttributeError:
             pass
+        # Always return None
 
     def audio_callback(indata, frames, time, status):
         recording.append(indata.copy())
