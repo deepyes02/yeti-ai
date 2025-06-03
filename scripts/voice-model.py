@@ -53,21 +53,21 @@ def transcribe_audio(filename="input.wav"):
 
 # --- Convert text to speech using Coqui TTS ---
 def speak_text(text):
-    tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=False)
+    tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=True)
     tts.tts_to_file(text=text, file_path="output.wav")
     os.system("afplay output.wav" if os.name == "posix" else "start output.wav")  # macOS vs Windows
 
 # --- Main Loop ---
 if __name__ == "__main__":
-    while True:
-        cmd = input("Press 'r' to record or 'q' to quit: ").strip().lower()
-        if cmd == 'q':
-            print("Exiting.")
-            break
-        elif cmd == 'r':
-            record_audio()
-            text = transcribe_audio()
-            print(f"🗣️ You said: {text}")
-            speak_text(f"You said: {text}")
-        else:
-            print("Invalid input. Press 'r' to record or 'q' to quit.")
+  while True:
+    cmd = input("Press 'r' to record or 'q' to quit: ").strip().lower()
+    if cmd == 'q':
+      print("Exiting.")
+      break
+    elif cmd == 'r':
+      record_audio()
+      text = transcribe_audio()
+      print(f"🗣️ You said: {text}")
+      speak_text(f"You said: {text}")
+    else:
+      print("Invalid input. Press 'r' to record or 'q' to quit.")

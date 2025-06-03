@@ -6,8 +6,6 @@ from langgraph.graph.message import add_messages
 from langchain_core.messages import HumanMessage, AIMessage
 from langgraph.checkpoint.memory import MemorySaver
 
-from transformers import AutoTokenizer
-
 class State(TypedDict):
   messages: Annotated[list, add_messages]
 
@@ -23,8 +21,7 @@ models = [
     "starcoder2:3b"
 ]
 
-tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-3-7B-Instruct")
-from transformers import AutoTokenizer
+
 from langchain_ollama import ChatOllama
 
 llm = ChatOllama(
@@ -38,12 +35,6 @@ llm = ChatOllama(
 
 
 def chatbot(state: State):
-  raw_prompt = tokenizer.apply_chat_template(
-        state["messages"],
-        tokenize=False,
-        add_generation_prompt=True,
-        enable_thinking=False  # disables "thinking" mode
-    )
   return {"messages" : [llm.invoke(state["messages"])]}
 
 graph_builder.add_node("chatbot", chatbot)
