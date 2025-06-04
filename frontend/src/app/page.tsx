@@ -11,6 +11,9 @@ export default function Home() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    fetch('/api/chat').then(res=>res.json().then(data=>{console.log(data)}))
+    // fetch('http://localhost:8000').then(res=>res.json().then(data=>{console.log(data)}))
+
   }, [messages]);
 
   const sendMessage = async (e?: React.FormEvent) => {
