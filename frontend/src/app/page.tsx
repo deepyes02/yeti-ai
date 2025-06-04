@@ -16,20 +16,31 @@ export default function Home() {
 
   }, [messages]);
 
-  const sendMessage = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!input.trim()) return;
-    const userMsg = { role: "user", content: input };
-    setMessages((msgs) => [...msgs, userMsg]);
-    setInput("");
-    // Placeholder for API call
-    setTimeout(() => {
-      setMessages((msgs) => [
-        ...msgs,
-        { role: "ai", content: "(AI response placeholder)" },
-      ]);
-    }, 800);
-  };
+const sendMessage = async (e?: React.FormEvent) => {
+  if (e) e.preventDefault();
+  if (!input.trim()) return;
+  const userMsg = { role: "user", content: input };
+  setMessages((msgs) => [...msgs, userMsg]);
+  const prompt = input;
+  setInput("");
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt }),
+    });
+    const data = await res.json();
+    setMessages((msgs) => [
+      ...msgs,
+      { role: "ai", content: data.response || "(No response)" },
+    ]);
+  } catch (err) {
+    setMessages((msgs) => [
+      ...msgs,
+      { role: "ai", content: "(Error contacting AI)" },
+    ]);
+  }
+};
 
   return (
     <div className={styles.chatPageWrapper}>
