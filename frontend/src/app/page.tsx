@@ -29,6 +29,7 @@ export default function Home() {
   };
 
   return (
+    <div className={styles.chatPageWrapper}>
     <div className={styles.chatContainer}>
       <div className={styles.chatWindow}>
         {messages.map((msg, i) => (
@@ -57,6 +58,7 @@ export default function Home() {
           Send
         </button>
       </form>
+    </div>
     </div>
   );
 }

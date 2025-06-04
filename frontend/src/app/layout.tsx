@@ -1,11 +1,6 @@
 import type { Metadata } from "next";
-import { Lexend_Deca } from "next/font/google";
 import "./globals.scss";
 
-const lexendDeca = Lexend_Deca({
-  variable: "--font-lexend-deca",
-  subsets: ["latin"],
-});
 
 
 export const metadata: Metadata = {
@@ -20,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lexendDeca.variable}`}>
+      <body>
         {children}
       </body>
     </html>

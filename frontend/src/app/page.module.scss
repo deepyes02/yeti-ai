@@ -1,10 +1,16 @@
 // Fullscreen, black-blueish modern chat UI
+.chatPageWrapper{
+	height: 100vh;
+	width: 100vw;
+	overflow:hidden;
+
+}
 .chatContainer {
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: stretch;
-  min-height: 100vh;
+	height: 100%;
 	width: calc(100% - 24px);
 	padding: 48px;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
