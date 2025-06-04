@@ -1,5 +1,5 @@
-## DECENTRALIZED INTELLIGENCE ##
-The idea is to integrate blockchain but that is far fetched.
+## OPEN SOURCE INTELLIGENCE ##
+For people that want their own open source model.
 
 ## Why ##
 I want to have a personalized AI model and to do things for me, like go on a website and fetch information. I want several of the information I share to be private.
@@ -28,7 +28,11 @@ docker compose up -d
 ## or docker compose up --build for first time
 ```
 
-#### Make a POST Request with prompt
+### Frontend
+Hooked up our frontend with Next JS so that we can get the best of React.
+
+#### API
+API can be developed like this via fast api
 ##### Add body with prompt on the POST Request
 ```txt
 POST http://localhost:8000/chat
@@ -47,4 +51,4 @@ POST http://localhost:8000/chat
 ```
 
 #### Tool calling
-With Llama, mistral and qwen, tool calling is possible. See ```scripts/tool_calling.py``` for more details. It is a test tool that returns static result, and the model is able to handle it. 
+With Llama, mistral and qwen, tool calling is possible. See ```scripts/tool_calling.py``` for more details. It is a test tool that returns static result, and the model is able to handle it.

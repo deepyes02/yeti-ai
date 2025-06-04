@@ -12,13 +12,9 @@ class State(TypedDict):
 graph_builder = StateGraph(State)
 models = [
     "qwen3",
-    "qwen2.5:14b",
     "mistral:7b",
     "deepseek-r1:8b",
-    "llama2-uncensored:latest",
     "llama3.2:latest",
-    "qwen2.5:14b",
-    "starcoder2:3b"
 ]
 
 

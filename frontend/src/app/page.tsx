@@ -7,13 +7,11 @@ export default function Home() {
     { role: "ai", content: "Hello! How can I help you today?" },
   ]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    fetch('/api/chat').then(res=>res.json().then(data=>{console.log(data)}))
-    // fetch('http://localhost:8000').then(res=>res.json().then(data=>{console.log(data)}))
-
   }, [messages]);
 
 const sendMessage = async (e?: React.FormEvent) => {
@@ -23,6 +21,12 @@ const sendMessage = async (e?: React.FormEvent) => {
   setMessages((msgs) => [...msgs, userMsg]);
   const prompt = input;
   setInput("");
+  setLoading(true);
+  // Show loading bubble
+  setMessages((msgs) => [
+    ...msgs,
+    { role: "ai", content: "..." },
+  ]);
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
@@ -30,15 +34,24 @@ const sendMessage = async (e?: React.FormEvent) => {
       body: JSON.stringify({ prompt }),
     });
     const data = await res.json();
-    setMessages((msgs) => [
-      ...msgs,
-      { role: "ai", content: data.response || "(No response)" },
-    ]);
+    setMessages((msgs) => {
+      // Remove the last '...' message and add the real response
+      const msgsWithoutLoading = msgs.slice(0, -1);
+      return [
+        ...msgsWithoutLoading,
+        { role: "ai", content: data.response || "(No response)" },
+      ];
+    });
   } catch (err) {
-    setMessages((msgs) => [
-      ...msgs,
-      { role: "ai", content: "(Error contacting AI)" },
-    ]);
+    setMessages((msgs) => {
+      const msgsWithoutLoading = msgs.slice(0, -1);
+      return [
+        ...msgsWithoutLoading,
+        { role: "ai", content: "(Error contacting AI)" },
+      ];
+    });
+  } finally {
+    setLoading(false);
   }
 };
 
