@@ -18,7 +18,7 @@ async def stream_model_output(prompt:str):
     repeat_penalty=2.0
   )
   input_messages = [HumanMessage(content=prompt)]
-  for chunk,_ in model.stream(input_messages):
+  for chunk in model.stream(input_messages):
     if isinstance(chunk, AIMessage):
       yield chunk.content
 

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, WebSocket
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from app.call_the_model import call_the_model, stream_model_output
 
@@ -15,12 +15,22 @@ app.add_middleware(
 @app.websocket("/ws")
 async def websocket_endpoint(websocket : WebSocket):
   await websocket.accept()
-  while True:
-    prompt = await websocket.receive_text()
-    async for chunk in stream_model_output(prompt):
-      if not isinstance(chunk, str):
-        chunk = str(chunk)
-      await websocket.send_text(chunk)
+  try:
+    while True:
+      try:
+        prompt = await websocket.receive_text()
+      except WebSocketDisconnect:
+        print("Client disconnected")
+        break
+      except Exception as e:
+        print(f"Error receiving data: {e}")
+        continue
+      async for chunk in stream_model_output(prompt):
+        if not isinstance(chunk, str):
+          chunk = str(chunk)
+        await websocket.send_text(chunk)
+  except:
+    websocket.close()
 
 @app.get("/")
 def home():

@@ -76,7 +76,7 @@ export default function Home() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
           />
-          {!loading && <button className={styles.sendButton} type="submit">Send</button>}
+          {<button className={styles.sendButton} type="submit">Send</button>}
         </form>
       </div>
     </div>
