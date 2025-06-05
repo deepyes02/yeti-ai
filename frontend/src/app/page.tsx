@@ -43,8 +43,7 @@ export default function Home() {
     setInput("");
     setLoading(true);
     setMessages((msgs) => [
-      ...msgs, userMsg,
-      { role: "ai", content: "..." },
+      ...msgs, userMsg
     ]);
     socket.current?.send(input);
     setInput('')

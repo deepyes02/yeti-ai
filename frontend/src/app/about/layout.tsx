@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import "./globals.scss";
+import "../globals.scss";
 
 export const metadata: Metadata = {
-  title: "Agentic AI",
+  title: "About Agentic AI",
   description: "Bringing our AI to life",
-  keywords: ["seo keyword for this page", "can be more than one"]
 };
 
 export default function RootLayout({
