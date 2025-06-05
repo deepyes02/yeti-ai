@@ -8,7 +8,7 @@ export default function Home() {
   ]);
   const [input, setInput] = useState("");
   
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const socket = useRef<WebSocket | null>(null)
@@ -16,21 +16,25 @@ export default function Home() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  useEffect(() => {
+useEffect(() => {
   socket.current = new WebSocket("ws://localhost:8000/ws");
 
   socket.current.onmessage = (event) => {
     const text = event.data;
-    setMessages((prev) => {
-      const newMsgs = [...prev];
+
+    setMessages((prevMsgs) => {
+      const newMsgs = [...prevMsgs];
       const lastIndex = newMsgs.length - 1;
-      console.log(newMsgs)
-      if (newMsgs[lastIndex].role === "ai") {
-        newMsgs[lastIndex].content += text;
+
+      if (newMsgs[lastIndex]?.role === "ai") {
+        // Defensive: prevent accidental duplication
+        if (!newMsgs[lastIndex].content.endsWith(text)) {
+          newMsgs[lastIndex].content += text;
+        }
       } else {
         newMsgs.push({ role: "ai", content: text });
       }
+
       return newMsgs;
     });
   };
@@ -42,11 +46,9 @@ export default function Home() {
     if (e) e.preventDefault();
     if (!input.trim()) return;
     const userMsg = { role: "user", content: input };
-    setMessages((msgs) => [...msgs, userMsg]);
-    setInput("");
-    setLoading(true);
+    setMessages((msgs) => [...msgs, userMsg, {role: "ai", content: ""}]);
     socket.current?.send(input);
-    setInput('')
+    setInput("");
   };
 
   return (

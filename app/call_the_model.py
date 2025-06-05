@@ -11,15 +11,15 @@ def stream_model_output(prompt:str):
   ]
   model = ChatOllama(
     base_url=os.getenv("OLLAMA_BASE_URL","http://host.docker.internal:11434"),
-    model=models[3],
+    model=models[0],
     temperature=0.6,
     top_p=0.95,
-    num_ctx=2048, 
+    num_ctx=4000, 
     repeat_penalty=2.0
   )
   input_messages = [HumanMessage(content=prompt)]
   for chunk in model.stream(input_messages):
-    if isinstance(chunk, AIMessage):
+    if hasattr(chunk, "content") and isinstance(chunk.content, str):
       yield chunk.content
 
 ## a simple model call function for example purposes
