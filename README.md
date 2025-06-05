@@ -1,15 +1,19 @@
 ## OPEN SOURCE INTELLIGENCE ##
-For people that want their own open source model.
+Using open source AI models with tool calling capabilities, it is possible to write an intelligent program that can do agentic functions. In this project, I am trying to create a personalized experience with the use of artifical intelligence driven by langchain and other agentic ai frameworks.
+
+### Capabilities
+1. Streaming chat output to the web server with websocket
 
 ## Why ##
-I want to have a personalized AI model and to do things for me, like go on a website and fetch information. I want several of the information I share to be private.
+Customize and bring open source models to the world. Enable private use of AI with secure information.
 
 ### Developments:
 1. Data persistence via threads.
 2. Data streaming for real time response.
-3. Backend server
+3. Backend ai server (langchain, fastapi)
+4. Web Server (Next JS)
 
-### Requirements:
+### Dependencies:
 1. Ollama and local models (Running in OS)
 2. Docker (for server)
 
