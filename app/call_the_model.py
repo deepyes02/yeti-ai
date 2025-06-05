@@ -11,7 +11,7 @@ def stream_model_output(prompt:str):
   ]
   model = ChatOllama(
     base_url=os.getenv("OLLAMA_BASE_URL","http://host.docker.internal:11434"),
-    model=models[0],
+    model=models[1],
     temperature=0.6,
     top_p=0.95,
     num_ctx=4000, 

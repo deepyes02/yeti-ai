@@ -18,14 +18,12 @@ export default function Home() {
   }, [messages]);
 useEffect(() => {
   socket.current = new WebSocket("ws://localhost:8000/ws");
-
   socket.current.onmessage = (event) => {
     const text = event.data;
-
+    console.log(text)
     setMessages((prevMsgs) => {
       const newMsgs = [...prevMsgs];
       const lastIndex = newMsgs.length - 1;
-
       if (newMsgs[lastIndex]?.role === "ai") {
         // Defensive: prevent accidental duplication
         if (!newMsgs[lastIndex].content.endsWith(text)) {
@@ -34,7 +32,6 @@ useEffect(() => {
       } else {
         newMsgs.push({ role: "ai", content: text });
       }
-
       return newMsgs;
     });
   };
