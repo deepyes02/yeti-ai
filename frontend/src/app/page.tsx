@@ -7,6 +7,7 @@ export default function Home() {
     { role: "ai", content: "Hello! How can I help you today?" },
   ]);
   const [input, setInput] = useState("");
+  
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -23,8 +24,10 @@ export default function Home() {
     const text = event.data;
     setMessages((prev) => {
       const newMsgs = [...prev];
-      if (newMsgs[newMsgs.length - 1]?.content === "...") {
-        newMsgs[newMsgs.length - 1].content = text;
+      const lastIndex = newMsgs.length - 1;
+      console.log(newMsgs)
+      if (newMsgs[lastIndex].role === "ai") {
+        newMsgs[lastIndex].content += text;
       } else {
         newMsgs.push({ role: "ai", content: text });
       }
@@ -42,9 +45,6 @@ export default function Home() {
     setMessages((msgs) => [...msgs, userMsg]);
     setInput("");
     setLoading(true);
-    setMessages((msgs) => [
-      ...msgs, userMsg
-    ]);
     socket.current?.send(input);
     setInput('')
   };

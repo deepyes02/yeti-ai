@@ -2,7 +2,7 @@ from langchain_ollama import ChatOllama
 from langchain_core.messages import HumanMessage, AIMessage
 import os
 
-async def stream_model_output(prompt:str):
+def stream_model_output(prompt:str):
   models = [
     "qwen3",
     "mistral:7b",
