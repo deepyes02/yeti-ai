@@ -9,15 +9,15 @@ from pynput import keyboard
 import threading
 
 import warnings
-warnings.filterwarnings("ignore", message="FP16 is not supported on CPU; using FP32 instead")  # Suppress TTS warnings
-
+warnings.filterwarnings("ignore", message="FP16 is not supported on CPU; using FP32 instead")
 # --- Record audio ---
 def record_audio(filename="input.wav", samplerate=16000):
     print("🎙️ Speak now! (Press 's' to stop recording)")
     recording = []
     stop_flag = threading.Event()
-    listener = None  # Declare listener in outer scope
-
+    listener = None
+    # Declare listener in outer scope
+    
     def on_press(key):
         try:
             if key.char == 's':
@@ -27,19 +27,16 @@ def record_audio(filename="input.wav", samplerate=16000):
         except AttributeError:
             pass
         # Always return None
-
     def audio_callback(indata, frames, time, status):
         recording.append(indata.copy())
         if stop_flag.is_set():
             raise sd.CallbackStop
-
     listener = keyboard.Listener(on_press=on_press)
     listener.start()
-
+    
     with sd.InputStream(samplerate=samplerate, channels=1, dtype='int16', callback=audio_callback):
         while not stop_flag.is_set():
             sd.sleep(100)
-
     listener.join()
     audio = np.concatenate(recording, axis=0)
     wav.write(filename, samplerate, audio)

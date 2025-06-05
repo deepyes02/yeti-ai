@@ -10,49 +10,44 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const socket = useRef<WebSocket | null>(null)
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+  socket.current = new WebSocket("ws://localhost:8000/ws");
+
+  socket.current.onmessage = (event) => {
+    const text = event.data;
+    setMessages((prev) => {
+      const newMsgs = [...prev];
+      if (newMsgs[newMsgs.length - 1]?.content === "...") {
+        newMsgs[newMsgs.length - 1].content = text;
+      } else {
+        newMsgs.push({ role: "ai", content: text });
+      }
+      return newMsgs;
+    });
+  };
+
+  return () => socket.current?.close();
+}, []);
 
   const sendMessage = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!input.trim()) return;
     const userMsg = { role: "user", content: input };
     setMessages((msgs) => [...msgs, userMsg]);
-    const prompt = input;
     setInput("");
     setLoading(true);
-    // Show loading bubble
     setMessages((msgs) => [
-      ...msgs,
+      ...msgs, userMsg,
       { role: "ai", content: "..." },
     ]);
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt }),
-      });
-      const data = await res.json();
-      setMessages((msgs) => {
-        // Remove the last '...' message and add the real response
-        const msgsWithoutLoading = msgs.slice(0, -1);
-        return [
-          ...msgsWithoutLoading,
-          { role: "ai", content: data.response || "(No response)" },
-        ];
-      });
-    } catch (err) {
-      setMessages((msgs) => {
-        const msgsWithoutLoading = msgs.slice(0, -1);
-        return [
-          ...msgsWithoutLoading,
-          { role: "ai", content: "(Error contacting AI)" + err },
-        ];
-      });
-    } finally {
-      setLoading(false);
-    }
+    socket.current?.send(input);
+    setInput('')
   };
 
   return (
