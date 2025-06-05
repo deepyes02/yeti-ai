@@ -1,7 +1,7 @@
 from langchain_ollama import ChatOllama
 from langchain_core.messages import HumanMessage, AIMessage
 import os
-
+##today we will learn how to program an AI
 def stream_model_output(prompt:str):
   models = [
     "qwen3",
