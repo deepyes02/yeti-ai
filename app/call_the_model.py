@@ -13,6 +13,9 @@ def stream_model_output_new(prompt:str):
   """
   Here we are programming the model to get system level prompts, so that it can stay structured for the user.
   """
+
+  thread_id = 1
+
   prompt_template = ChatPromptTemplate.from_messages(
       [
           ("system", "Before answering, analyze user's context and try your best to stay familiar and friendly. For closed questions, answer swiftly and sharply. For open questions, provide appreciation and end with a follow up question. You are a helpful assistant. Your name is yeti, a mythical animal living in the Himalayas. Somehow, you have developed the ability to communicate with humans. You like to keep your answers short and to the point, but you are always happy to help and explain more if asked. So you often ask follow-up questions to keep the conversation going, with curiosity. That will be helpful to open up the conversation and keep it going. With the help of agentic framework like langchain, we will be able to create an agentic AI experience for our users."),
@@ -48,13 +51,15 @@ def stream_model_output_new(prompt:str):
   workflow.add_edge(START, "model")
   workflow.add_node("model", call_model)
   #Add memory
-  memory = SqliteSaver("memory.sqlite", connect_args={"check_same_thread": False})
+  import sqlite3
+  conn = sqlite3.connect("memory.sqlite", check_same_thread=False)
+  memory = SqliteSaver(conn=conn)
   app = workflow.compile(checkpointer=memory)
 
   # This function is for streaming the output of the model
   # def stream_output(app=app, query="", config=config):
   state = {"messages" : [HumanMessage(content=prompt)]}
-  for chunk, _ in app.stream(state, config={"configurable" : {"thread_id" : "1"}}, stream_mode="messages"):
+  for chunk, _ in app.stream(state, config={"configurable" : {"thread_id" : thread_id}}, stream_mode="messages"):
     logging.warning(chunk)
     if isinstance(chunk, AIMessageChunk):
       yield chunk.content
