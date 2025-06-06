@@ -3,6 +3,9 @@ Using open source AI models with tool calling capabilities, it is possible to wr
 
 ### Capabilities
 1. Streaming chat output to the web server with websocket
+2. Saving user data in sqlite
+3. Displaying 
+![alt text](image-1.png)
 
 ## Why ##
 Customize and bring open source models to the world. Enable private use of AI with secure information.

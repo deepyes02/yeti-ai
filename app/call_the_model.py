@@ -48,7 +48,6 @@ def stream_model_output_new(prompt:str):
     response = model.invoke(prompt)
     return {"messages": state["messages"] + [response]}  # Append new AIMessage
 
-
   #define a node in the graph
   workflow.add_edge(START, "model")
   workflow.add_node("model", call_model)
