@@ -7,11 +7,12 @@ def stream_model_output(prompt:str):
     "qwen3",
     "mistral:7b",
     "deepseek-r1:8b",
-    "llama3.2:latest",
+    "llama3.2:latest",  
+    "gemma3:4b"
   ]
   model = ChatOllama(
     base_url=os.getenv("OLLAMA_BASE_URL","http://host.docker.internal:11434"),
-    model=models[1],
+    model=models[4],
     temperature=0.6,
     top_p=0.95,
     num_ctx=4000, 

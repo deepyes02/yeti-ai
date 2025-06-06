@@ -2,10 +2,13 @@
 import { useState, useRef, useEffect } from "react";
 import styles from "./page.module.scss";
 
+type RoleAndMessage = {
+  role: 'ai' | 'user';
+  content: string;
+};
+
 export default function Home() {
-  const [messages, setMessages] = useState([
-    { role: "ai", content: "Hello! How can I help you today?" },
-  ]);
+  const [messages, setMessages] = useState<RoleAndMessage[] | []>([]);
   const [input, setInput] = useState("");
   
   // const [loading, setLoading] = useState(false);
@@ -20,7 +23,6 @@ useEffect(() => {
   socket.current = new WebSocket("ws://localhost:8000/ws");
   socket.current.onmessage = (event) => {
     const text = event.data;
-    console.log(text)
     setMessages((prevMsgs) => {
       const newMsgs = [...prevMsgs];
       const lastIndex = newMsgs.length - 1;
@@ -30,7 +32,7 @@ useEffect(() => {
           newMsgs[lastIndex].content += text;
         }
       } else {
-        newMsgs.push({ role: "ai", content: text });
+        newMsgs.push({ role: "ai" as const, content: text })
       }
       return newMsgs;
     });
@@ -42,8 +44,8 @@ useEffect(() => {
   const sendMessage = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!input.trim()) return;
-    const userMsg = { role: "user", content: input };
-    setMessages((msgs) => [...msgs, userMsg, {role: "ai", content: ""}]);
+    const userMsg = { role: "user" as const, content: input };
+    setMessages((msgs) => [...msgs, userMsg, { role: "ai", content: "" }]);
     socket.current?.send(input);
     setInput("");
   };
