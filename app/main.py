@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from app.call_the_model import call_the_model, stream_model_output
+from app.call_the_model import stream_model_output, stream_model_output_new
 import asyncio
 import threading
 import logging
@@ -31,7 +31,7 @@ async def websocket_endpoint(websocket: WebSocket):
         q = Queue()
 
         def produce():
-            for chunk in stream_model_output(prompt):
+            for chunk in stream_model_output_new(prompt):
                 q.put(chunk)
             q.put(None)  # Sentinel value
 
@@ -44,23 +44,3 @@ async def websocket_endpoint(websocket: WebSocket):
                 break
             await websocket.send_text(chunk)
 
-@app.get("/")
-def home():
-  
-  return {"response": "Hello world"}
-
-@app.get("/user/{user_id}")
-def get_user(user_id: int):
-  print(">> My custom message", flush=True)
-  return {"response", user_id}
-
-@app.get("/chat")
-async def get_chat():
-  logging.info("🔧 Hello from logger")
-  return {"response": call_the_model("नमस्ते। आप कैसे हैं?")}
-
-@app.post("/chat")
-async def chat(request: Request):
-    body = await request.json()
-    prompt = body.get("prompt")
-    return {"response": call_the_model(prompt)}
