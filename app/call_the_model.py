@@ -34,10 +34,10 @@ def stream_model_output_new(prompt:str):
   ]
   model = ChatOllama(
     base_url=os.getenv("OLLAMA_BASE_URL","http://host.docker.internal:11434"),
-    model=models[4],
-    temperature=0.6,
+    model=models[0],
+    temperature=0.75,
     top_p=0.95,
-    num_ctx=4000, 
+    num_ctx=12000,
     repeat_penalty=2.0
   )
   #Define a new graph
