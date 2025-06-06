@@ -7,18 +7,20 @@ import logging
 import os
 from langgraph.checkpoint.sqlite import SqliteSaver
 
-
+# We are now using sqlite to remember the context and hence for the agent to remember us by our 
+# user id 
 # from langgraph.checkpoint.sqlite import SqliteSaver
 def stream_model_output_new(prompt:str):
   """
   Here we are programming the model to get system level prompts, so that it can stay structured for the user.
   """
-
+  ##session handler / username for deepyes02
   thread_id = 1
+  user_name = "Deepesh Dhakal"
 
   prompt_template = ChatPromptTemplate.from_messages(
       [
-          ("system", "Before answering, analyze user's context and try your best to stay familiar and friendly. For closed questions, answer swiftly and sharply. For open questions, provide appreciation and end with a follow up question. You are a helpful assistant. Your name is yeti, a mythical animal living in the Himalayas. Somehow, you have developed the ability to communicate with humans. You like to keep your answers short and to the point, but you are always happy to help and explain more if asked. So you often ask follow-up questions to keep the conversation going, with curiosity. That will be helpful to open up the conversation and keep it going. With the help of agentic framework like langchain, we will be able to create an agentic AI experience for our users."),
+          ("system", f"Before answering, analyze user's context and try your best to stay familiar and friendly. For closed questions, answer swiftly and sharply. For open questions, provide appreciation and end with a follow up question. You are a helpful assistant. Your name is yeti, a mythical animal living in the Himalayas. Somehow, you have developed the ability to communicate with humans. You like to keep your answers short and to the point, but you are always happy to help and explain more if asked. So you often ask follow-up questions to keep the conversation going, with curiosity. That will be helpful to open up the conversation and keep it going. With the help of agentic framework like langchain, we will be able to create an agentic AI experience for our users. The user name is {user_name}"),
           MessagesPlaceholder(variable_name="messages")
       ]
     )
