@@ -1,5 +1,6 @@
 'use client'
 import { useState, useRef, useEffect } from "react";
+import MarkdownRenderer from "./_components/MarkdownRenderer";
 import styles from "./page.module.scss";
 
 type RoleAndMessage = {
@@ -16,9 +17,9 @@ export default function Home() {
 
   const socket = useRef<WebSocket | null>(null)
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  // useEffect(() => {
+  //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  // }, [messages]);
 useEffect(() => {
   socket.current = new WebSocket("ws://localhost:8000/ws");
   socket.current.onmessage = (event) => {
@@ -55,16 +56,10 @@ useEffect(() => {
       <div className={styles.chatContainer}>
         <div className={styles.chatWindow}>
           {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={
-                msg.role === "user"
-                  ? styles.userMessage
-                  : styles.aiMessage
-              }
-            >
-              {msg.content}
-            </div>
+            msg.role === 'user' ?
+            <div key={i} className={styles.userMessage}>{msg.content}</div>
+            :
+            <div key={i} className={styles.aiMessage}><MarkdownRenderer content={msg.content}/></div>
           ))}
           <div ref={messagesEndRef} />
         </div>
