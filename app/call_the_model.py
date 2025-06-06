@@ -5,6 +5,8 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
 import logging
 import os
+from langgraph.checkpoint.sqlite import SqliteSaver
+
 
 # from langgraph.checkpoint.sqlite import SqliteSaver
 def stream_model_output_new(prompt:str):
@@ -46,7 +48,7 @@ def stream_model_output_new(prompt:str):
   workflow.add_edge(START, "model")
   workflow.add_node("model", call_model)
   #Add memory
-  memory = MemorySaver()
+  memory = SqliteSaver("memory.sqlite", connect_args={"check_same_thread": False})
   app = workflow.compile(checkpointer=memory)
 
   # This function is for streaming the output of the model
