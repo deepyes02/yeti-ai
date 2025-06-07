@@ -3,6 +3,9 @@ Using open source AI models with tool calling capabilities, it is possible to wr
 
 ### Capabilities
 1. Streaming chat output to the web server with websocket
+2. Saving user data in sqlite
+3. Displaying 
+![alt text](image-1.png)
 
 ## Why ##
 Customize and bring open source models to the world. Enable private use of AI with secure information.
@@ -56,3 +59,6 @@ POST http://localhost:8000/chat
 
 #### Tool calling
 With Llama, mistral and qwen, tool calling is possible. See ```scripts/tool_calling.py``` for more details. It is a test tool that returns static result, and the model is able to handle it.
+
+### Dependencies
+1. ## pip install -U "psycopg[binary,pool]" langgraph langgraph-checkpoint-postgres ##
