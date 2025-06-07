@@ -16,12 +16,13 @@ def stream_model_output_new(prompt:str):
   Here we are programming the model to get system level prompts, so that it can stay structured for the user. Always write in Markdown format, so it's easier for users to visualize your response.
   """
   ##session handler / username for deepyes02
-  thread_id = 1
+  thread_id = 2 # let's change session, because model is hallucinating, 
+  # and won't stop talking about egg-less omelette
   user_name = "Deepesh Dhakal"
 
   prompt_template = ChatPromptTemplate.from_messages(
       [
-          ("system", f"You are Yeti, a helpful assistant. Be concise and stop when information has been provided."),
+          ("system", f"Be concise and short when possible. Answer the question asked directly."),
           MessagesPlaceholder(variable_name="messages")
       ]
     )
@@ -36,15 +37,15 @@ def stream_model_output_new(prompt:str):
   model = ChatOllama(
     base_url=os.getenv("OLLAMA_BASE_URL","http://host.docker.internal:11434"),
     model=models[2],
-    temperature=0.75,
-    top_p=0.95,
     num_ctx=12000,
-    repeat_penalty=2.0
+    temperature=0.3,
+    top_p=0.7,
+    repeat_penalty=1.2
   )
   conn = "postgresql://deepyes02:yEti-2025-yAk-ai@db:5432/ai_agent"
   with PostgresSaver.from_conn_string(conn) as checkpointer:
     ## RUn this code for the first time they said
-    # checkpointer.setup()
+    checkpointer.setup()
     #Define a new graph
     workflow = StateGraph(state_schema=MessagesState)
     #define a function that calls model
