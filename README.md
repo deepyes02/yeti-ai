@@ -1,12 +1,12 @@
 ## OPEN SOURCE INTELLIGENCE ##
 Using open source AI models with tool calling capabilities, it is possible to write an intelligent program that can do agentic functions. In this project, I am trying to create a personalized experience with the use of artifical intelligence driven by langchain and other agentic ai frameworks.
 
-![Yeti is a mythical mountain creature that several people have reported sightings, looks like human and more intelligent](yeti.png)
+<img src="yeti.png" alt="Yeti is a mythical mountain creature that several people have reported sightings, looks like human and more intelligent" height="300" width="180">  
+
 ### Capabilities
 1. Streaming chat output to the web server with websocket
 2. Saving user data in sqlite
-3. Displaying 
-
+3. Displaying
 
 ## Why ##
 Customize and bring open source models to the world. Enable private use of AI with secure information.
