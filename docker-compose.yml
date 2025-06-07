@@ -11,7 +11,17 @@ services:
       - ./app:/app/app
       - ./db:/app
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: ai_agent
+      POSTGRES_USER: deepyes02
+      POSTGRES_PASSWORD: yEti-2025-yAk-ai
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
   frontend:
     build: ./frontend
     container_name : web
@@ -24,3 +34,5 @@ services:
     volumes:
       - ./frontend:/app
     command: npm run dev
+volumes:
+  pg_data:

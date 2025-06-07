@@ -1,19 +1,19 @@
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from app.call_the_model import stream_model_output, stream_model_output_new
+from app.call_the_model import stream_model_output_new
 import asyncio
 import threading
 import logging
 
 app = FastAPI()
 
-app.add_middleware(
-  CORSMiddleware,
-  allow_origins=["http://localhost:3000"],
-  allow_credentials=True,
-  allow_methods=["*"],
-  allow_headers=["*"]
-)
+# app.add_middleware(
+#   CORSMiddleware,
+#   allow_origins=["http://localhost:3000"],
+#   allow_credentials=True,
+#   allow_methods=["*"],
+#   allow_headers=["*"]
+# )
 
 import threading
 from queue import Queue

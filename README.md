@@ -59,3 +59,6 @@ POST http://localhost:8000/chat
 
 #### Tool calling
 With Llama, mistral and qwen, tool calling is possible. See ```scripts/tool_calling.py``` for more details. It is a test tool that returns static result, and the model is able to handle it.
+
+### Dependencies
+1. ## pip install -U "psycopg[binary,pool]" langgraph langgraph-checkpoint-postgres ##
