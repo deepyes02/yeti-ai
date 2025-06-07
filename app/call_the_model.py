@@ -1,6 +1,6 @@
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_ollama import ChatOllama
-from langchain_core.messages import HumanMessage, AIMessage, AIMessageChunk
+from langchain_core.messages import HumanMessage, AIMessageChunk
 from langgraph.graph import START, MessagesState, StateGraph
 import logging
 import os
@@ -18,11 +18,10 @@ def stream_model_output_new(prompt:str):
   ##session handler / username for deepyes02
   thread_id = 2 # let's change session, because model is hallucinating, 
   # and won't stop talking about egg-less omelette
-  user_name = "Deepesh Dhakal"
 
   prompt_template = ChatPromptTemplate.from_messages(
       [
-          ("system", f"Be concise and short when possible. Answer the question asked directly."),
+          ("system", f"Be concise and short when possible. Answer the question asked directly. Study user content and respond accordingly. Do not share or encourage harmful and political information that might create social instability. Encourage people to protect their privacy and stay safe. Always make sure no legal boundaries are crossed. Warn users to be reflective of their actions when it suits so. Do not provide false flattery, but authentic appreciation and encouragement. Healthy AI. If you haven't already, ask the user their name. Check input for repeat questions. If same question is repeated, only answer once."),
           MessagesPlaceholder(variable_name="messages")
       ]
     )
@@ -36,7 +35,7 @@ def stream_model_output_new(prompt:str):
   ]
   model = ChatOllama(
     base_url=os.getenv("OLLAMA_BASE_URL","http://host.docker.internal:11434"),
-    model=models[2],
+    model=models[3],
     num_ctx=12000,
     temperature=0.3,
     top_p=0.7,
@@ -45,7 +44,7 @@ def stream_model_output_new(prompt:str):
   conn = "postgresql://deepyes02:yEti-2025-yAk-ai@db:5432/ai_agent"
   with PostgresSaver.from_conn_string(conn) as checkpointer:
     ## RUn this code for the first time they said
-    checkpointer.setup()
+    # checkpointer.setup()
     #Define a new graph
     workflow = StateGraph(state_schema=MessagesState)
     #define a function that calls model
