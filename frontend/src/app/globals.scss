@@ -1,16 +1,33 @@
-html, body {
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-  font-family: 'Lexend Deca', Arial, sans-serif;
-  background: #f6f8fa;
-  color: #222;
+html,
+body {
+	min-height: 100vh;
+	margin: 0;
+	padding: 0;
+	font-family: "Lexend Deca", Arial, sans-serif;
+	background: #f6f8fa;
+	color: #222;
 }
 * {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
-button, input {
-  font-family: inherit;
+button,
+input {
+	font-family: inherit;
 }
 
+.prose think {
+	display: block;
+	padding: 1rem;
+	margin: 1rem 0;
+	font-style: italic;
+	background-color: #94a9bf;
+	border-left: 4px solid #d1d5db;
+	color: #374151;
+}
+
+.dark .prose think {
+	background-color: #1f2937;
+	border-left-color: #9ca3af;
+	color: #d1d5db;
+}
