@@ -58,4 +58,4 @@ async def mock_stream(websocket: WebSocket):
         words = response.split(" ")
         for word in response:
           await websocket.send_text(word)
-          await asyncio.sleep(0.05)
+          await asyncio.sleep(0.01)
