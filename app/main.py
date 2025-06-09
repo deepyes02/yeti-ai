@@ -44,3 +44,19 @@ async def websocket_endpoint(websocket: WebSocket):
                 break
             await websocket.send_text(chunk)
 
+@app.websocket("/ws-decoy")
+async def mock_stream(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        try:
+            await websocket.receive_text()
+        except WebSocketDisconnect:
+            break
+
+        # Simulated response with <think> and normal content
+        response = "<think>I see the user asked about websocket chunking. Let's pretend I'm an AI thinking through the steps. I'll need to simulate streaming behavior.</think> Sure! I'm now streaming this response as if it were real output from a language model. Let me know if you need another example!"
+
+        words = response.split(" ")
+        for word in words:
+          await websocket.send_text(word + " ")
+          await asyncio.sleep(0.05)
