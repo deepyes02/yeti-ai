@@ -4,22 +4,32 @@
 ### An agentic artifical intelligence framework 
 Yeti ai is an open-sourced, artifical intelligence framework built with langchain ecosystem. The architecture is separated by concerns, so expansion to the project to native app is possible. All services (frontend, backend, database) runs on docker containers. For the LLMs, ollama and some freely available models are using, specifically the ones with tool-calling activity.
 
+### Capabilities
+1. AI chatbot
+2. Remembering conversation, even after server is restarted. 
+
 ### Under developments and features
-- Adding voice, image analysis, and api calling functionality baked into the UI.
+- Adding voice, image analysis, and api functionalities (search, scrap, etc).
+- Generating user based session ids for memory and context awareness
+- Using some embedding models for vectorizing context history and providing more relevant information (not started).
+- Voice controls & conversation (tested but).
+- Image analysis. 
+
+### Challenges
+- Not having a strong PC with GPU capabilities to run models faster, or run bigger models.
 
 ### Requirements
 1. [Install Ollama]("https://ollama.com/")
-2. Pull some models `ollama run modelName`
+2. Pull some models `ollama run modelName`. 
   For example
   ```bash
 $ ollama ls
 NAME               ID              SIZE      MODIFIED
-qwen3:latest       500a1f067a9f    5.2 GB    6 days ago
-mistral:latest     f974a74358d6    4.1 GB    6 days ago
+qwen3:latest       500a1f067a9f    5.2 GB    6 days ago #thinking / non-thinking 
+mistral:latest     f974a74358d6    4.1 GB    6 days ago #non-thinking
 gemma3:4b          a2af6cc3eb7f    3.3 GB    2 weeks ago #doesn't support tool_calling
-mistral:7b         f974a74358d6    4.1 GB    2 months ago
-deepseek-r1:8b     28f8fd6cdc67    4.9 GB    4 months ago
-llama3.2:latest    a80c4f17acd5    2.0 GB    7 months ago
+deepseek-r1:8b     28f8fd6cdc67    4.9 GB    4 months ago #thiking
+llama3.2:latest    a80c4f17acd5    2.0 GB    7 months ago #not thinking
 ```
 3. And make sure the model name is passed in [call_the_model.py](./app/call_the_model.py)
 ```py
