@@ -20,7 +20,7 @@ models = [
 ]
 model = ChatOllama(
   base_url=os.getenv("OLLAMA_BASE_URL","http://host.docker.internal:11434"),
-  model=models[1],
+  model=models[2],
   num_ctx=12000,
   temperature=0.3,
   top_p=0.7,
