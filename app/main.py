@@ -39,7 +39,6 @@ async def websocket_endpoint(websocket: WebSocket):
 
         while True:
             chunk = await asyncio.get_event_loop().run_in_executor(None, q.get)
-            logging.warning(chunk)
             if chunk is None:
                 break
             await websocket.send_text(chunk)
@@ -54,9 +53,9 @@ async def mock_stream(websocket: WebSocket):
             break
 
         # Simulated response with <think> and normal content
-        response = "<think>I see the user asked about websocket chunking. Let's pretend I'm an AI thinking through the steps. I'll need to simulate streaming behavior.</think> Sure! I'm now streaming this response as if it were real output from a language model. Let me know if you need another example!"
+        response = "<think> Okay, the user has been repeatedly saying \"hi\" and \"hello,\" which seems like they're testing how I respond or just trying to get a reaction. They might be bored with the conversation flow or looking for something different. I need to keep things friendly but also encourage them to share more about what they want to talk about. Since we've had previous conversations, maybe they're not sure if I remember those interactions. I should acknowledge their greetings and invite them to ask questions or discuss any topic they're interested in. It's important to stay positive and open-ended so the conversation can move forward naturally without getting stuck in a loop. Also, considering the user mentioned working on an AI model earlier, maybe they have technical questions or want to explore more about how I function. But since their current messages are just greetings, it's better to keep the response light and engaging. </think> It seems like we've started fresh again! What’s on your mind today? Would you like to chat about something specific—or is there an old topic (like chess, exchange rates, or even that eggless omelette mystery) you’d like to revisit? I’m here to help whenever you’re ready! 😊"
 
         words = response.split(" ")
-        for word in words:
-          await websocket.send_text(word + " ")
+        for word in response:
+          await websocket.send_text(word)
           await asyncio.sleep(0.05)
