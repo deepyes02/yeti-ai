@@ -11,6 +11,9 @@ services:
       - LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
       - LANGSMITH_PROJECT=${LANGSMITH_PROJECT}
       - LANGSMITH_ENDPOINT=${LANGSMITH_ENDPOINT}
+      - EXCHANGE_CA=${EXCHANGE_CA}
+      - EXCHANGE_JP=${EXCHANGE_JP}
+      - EXCHANGE_SG=${EXCHANGE_SG}
     volumes:
       - ./app:/app/app
       - ./db:/app
