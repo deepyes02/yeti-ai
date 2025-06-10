@@ -34,7 +34,7 @@ def call_model(state: MessagesState):
   return {"messages": state["messages"] + [response]} 
 
 
-thread_id = 4
+thread_id = 5
 projectName = os.environ.get("LANGSMITH_PROJECT")
 workflow = StateGraph(state_schema=MessagesState)
 workflow.add_edge(START, "model")

@@ -6,7 +6,11 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL}
+      - LANGSMITH_TRACING=${LANGSMITH_TRACING}
+      - LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
+      - LANGSMITH_PROJECT=${LANGSMITH_PROJECT}
+      - LANGSMITH_ENDPOINT=${LANGSMITH_ENDPOINT}
     volumes:
       - ./app:/app/app
       - ./db:/app

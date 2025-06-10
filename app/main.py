@@ -5,6 +5,9 @@ import asyncio
 import threading
 import logging
 
+### Enable Langsmith by uncommenting below options
+# from app.utils.load_environment import load_environment_variables
+# load_environment_variables()
 app = FastAPI()
 
 # app.add_middleware(

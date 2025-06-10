@@ -15,6 +15,7 @@ comm==0.2.2
 dataclasses-json==0.6.7
 debugpy==1.8.14
 decorator==5.2.1
+duckduckgo_search==8.0.2
 executing==2.2.0
 fastapi==0.115.12
 frozenlist==1.6.2
@@ -45,6 +46,7 @@ langgraph-checkpoint-sqlite==2.0.10
 langgraph-prebuilt==0.2.2
 langgraph-sdk==0.1.70
 langsmith==0.3.44
+lxml==5.4.0
 marshmallow==3.26.1
 matplotlib-inline==0.1.7
 multidict==6.4.4
@@ -59,6 +61,7 @@ parso==0.8.4
 pexpect==4.9.0
 pgvector==0.3.6
 platformdirs==4.3.8
+primp==0.15.0
 prompt_toolkit==3.0.51
 propcache==0.3.1
 psutil==7.0.0

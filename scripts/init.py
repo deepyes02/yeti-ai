@@ -7,7 +7,7 @@ from langchain_core.messages import HumanMessage, AIMessage
 # load_environment_variables()
 # initialize with more explicit parameters
 llm = ChatOllama(
-    model="qwen2.5:14b", 
+    model="qwen3", 
     temperature=0.3, 
     top_p=0.95, 
     num_ctx=2048, 
