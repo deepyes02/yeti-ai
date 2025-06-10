@@ -24,6 +24,8 @@ services:
       - "5432:5432"
   pgadmin:
     image: dpage/pgadmin4
+    logging:
+      driver: none
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
