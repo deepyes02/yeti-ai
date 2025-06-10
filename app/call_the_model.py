@@ -4,6 +4,8 @@ from langgraph.graph import START, MessagesState, StateGraph, END
 import logging
 import os
 from app.utils.system_prompt import system_prompt
+from dotenv import load_dotenv
+load_dotenv()
 
 ## pip install -U "psycopg[binary,pool]" langgraph langgraph-checkpoint-postgres ##
 from langgraph.checkpoint.postgres import PostgresSaver
@@ -33,6 +35,7 @@ def call_model(state: MessagesState):
 
 
 thread_id = 4
+projectName = os.environ.get("LANGSMITH_PROJECT")
 workflow = StateGraph(state_schema=MessagesState)
 workflow.add_edge(START, "model")
 workflow.add_node("model", call_model)
@@ -45,13 +48,18 @@ def stream_model_output_new(prompt:str):
   Here we are programming the model to get system level prompts, so that it can stay structured for the user. Always write in Markdown format, so it's easier for users to visualize your response.
   """
   ##session handler
-
   with PostgresSaver.from_conn_string(conn) as checkpointer:
     checkpointer.setup()
     app = workflow.compile(checkpointer=checkpointer)
     # This function is for streaming the output of the model
     state = {"messages" : [HumanMessage(content=prompt)]}
-    for chunk, _ in app.stream(state, config={"configurable" : {"thread_id" : thread_id}}, stream_mode="messages"):
+    for chunk, _ in app.stream(state,
+    config={
+      "configurable" : {"thread_id" : thread_id},
+      "run_name" : f"{projectName}",
+      "metadata" : {"user_id" : thread_id}
+        },
+    stream_mode="messages"):
       logging.warning(chunk)
       if isinstance(chunk, AIMessageChunk):
         yield chunk.content

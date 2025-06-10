@@ -10,8 +10,7 @@ model = ChatOllama(
     temperature=0.9, 
     top_p=0.95, 
     num_ctx=2048, 
-    repeat_penalty=1.2,
-    timeout=120
+    repeat_penalty=1.2
 )
 #Define a new graph
 workflow = StateGraph(state_schema=MessagesState)
@@ -34,7 +33,7 @@ input_messages = [HumanMessage(content = query)]
 # output = app.invoke({"messages": input_messages}, config)
 # output["messages"][-1].pretty_print()
 
-for chunk, metadata in app.stream({"messages": input_messages}, config=config, stream_mode="messages"):
+for chunk, metadata in app.stream({"messages": input_messages}, config=config}, stream_mode="messages"):
     if isinstance(chunk, AIMessage):
       print(chunk.content, end = "", flush=True)
 
