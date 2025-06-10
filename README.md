@@ -86,3 +86,8 @@ pip install --upgrade pip
 pip install -r requirements.txt
 source env/bin/activate
 ```
+
+
+#### Model Comparision
+1. Deepseek - struggled to know prominent figure like "Laxmi Prasad Devkota" of Nepal, meaning its knowledge isn't wider, required for common sense.
+2. 
