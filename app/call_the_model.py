@@ -12,7 +12,9 @@ from langgraph.checkpoint.postgres import PostgresSaver
 
 load_dotenv()
 
-conn = os.environ.get("POSTGRESQL_URL")
+conn = os.environ.get("POSTGRESQL_URL", "")
+if not conn:
+    raise ValueError("POSTGRESQL_URL environment variable is not set.")
 
 prompt_template = system_prompt()
 model = load_model()
@@ -26,7 +28,7 @@ def call_model(state: MessagesState):
   response = model.invoke(prompt)
   return {"messages": state["messages"] + [response]}
 
-thread_id = 4
+thread_id = 5
 projectName = os.environ.get("LANGSMITH_PROJECT")
 def agent_router(state):
     messages = state['messages']
@@ -43,6 +45,7 @@ workflow.add_edge(START, "agent")
 
 workflow.add_conditional_edges("agent", path=agent_router)
 workflow.add_edge("tools", "agent")
+
 workflow.add_node("call_model", call_model)
 workflow.add_edge("call_model", END)
 
