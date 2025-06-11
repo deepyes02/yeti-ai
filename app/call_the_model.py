@@ -28,7 +28,10 @@ def call_model(state: MessagesState):
   response = model.invoke(prompt)
   return {"messages": state["messages"] + [response]}
 
-thread_id = 5
+def final_answer(state: MessagesState):
+  return state
+
+thread_id = 6
 projectName = os.environ.get("LANGSMITH_PROJECT")
 def agent_router(state):
     messages = state['messages']
