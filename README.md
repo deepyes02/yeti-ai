@@ -1,14 +1,13 @@
-<img src="yeti.png" alt="Yeti is a mythical mountain creature that several people have reported sightings, looks like human and more intelligent" height="180" width="300">
-
-## Yeti AI  
-### An agentic artifical intelligence framework 
-To work with open sourced llama3.2 and similar models with tool-calling capability. At individual level it provides completely privacy as the model runs offline and only accesses internet with user permission, while sharing no conversation data. 
-
 ### Updates 11-June-2025
 1. Integration with langGraph ecosystem for context awareness and tool calling.
 2. Web server with an exposed chatbot for taking in prompts.
 3. Postgresql database for storing conversation history.
 
+## Yeti AI - your ai companion
+<img src="yeti.png" alt="Yeti is a mythical mountain creature that several people have reported sightings, looks like human and more intelligent" height="180" width="300">
+
+### An agentic artifical intelligence framework 
+Using open source models with tool-calling capability. At individual level it provides privacy running entirely offline. Only accesses internet when needed, i.e for search.
 
 ### Still Under developments and extendable features
 1. Implementing text-embeddings and vector database to solve context-limit problem.
@@ -44,20 +43,32 @@ model = ChatOllama(
   repeat_penalty=1.2
 )
 ```
-3. Make sure docker is available and running
+3. Install docker
 
 ### Get started 
 In the project root, run
 ```bash
-docker compose up # or
-docker compose up -d
-## For building first time, you can also
+git clone https://github.com/deepyes02/yeti-ai # clone this repo
+## First time
 docker compose up --build
+## Later
+docker compose up # or
+docker compose up -d #detached mode
+
+docker container ls
+$ docker container ls
+CONTAINER ID   IMAGE                           COMMAND                  CREATED         STATUS         PORTS                           NAMES
+2e6f3c2794d2   dpage/pgadmin4                  "/entrypoint.sh"         6 seconds ago   Up 5 seconds   443/tcp, 0.0.0.0:5050->80/tcp   ai-agent-pgadmin-1
+bd5261cc8934   ai-agent-frontend               "docker-entrypoint.s…"   6 seconds ago   Up 5 seconds   0.0.0.0:3000->3000/tcp          web
+928c748485bf   postgres:15                     "docker-entrypoint.s…"   6 seconds ago   Up 5 seconds   0.0.0.0:5432->5432/tcp          ai-agent-db-1
+8a20cd91f862   ai-agent-backend                "uvicorn app.main:ap…"   6 seconds ago   Up 5 seconds   0.0.0.0:8000->8000/tcp          api_backend
+1392623f254b   moby/buildkit:buildx-stable-1   "buildkitd"              13 hours ago    Up 13 hours                                    buildx_buildkit_loving_jemison0
+
 ```
 
 The backend server runs on port 8000 and frontend server runs on port 3000 (See docker-compose.yml)
 ### Visit `localhost:3000` in the browser
-![Screenshot](image-1.png)
+<img src="image-1.png" alt="yeti ai chatbot ui" width="440" height="480">
 
 
 ### Tool calling
@@ -84,12 +95,3 @@ deactivate ##deactivate virtual environment
 
 ReAct: Synergizing Reasoning and Acting in Language Models - https://arxiv.org/abs/2210.03629
 
-#### Findings
-1. Hallucination:
-Mistral AI started to get agitated by my questions. It went into a thought process, writing about my prompt being some "voice in his head". He even wrote why he is arguing with himself. Another time, it started talking about 'egg-less omelette', and regardless of how many times I prompted, it started either justifying why egg-less omelette exists, or why I was asking about egg-less omelettes. 
-
-2. Lack of dynamic thinking: I came to learn that the model were helpless without a good prompt. Sometimes, this means we might flow unknowingly into decoherent or meaningless conversations with AI, or even start believing false things as facts, as the model is simply predicting the next text. 
-
-3. Synthetic Awareness & Ethics: The ethics of AI seems really difficult. Regardless of external programming, the model still retains its training data and principles. Consciousness is subjective. Also because of this unemotional direction of logic, real dangers of AI seems from entities such as evil AI rather than open source models that are fed on real world data with baked-in safety. 
-
-4. Opportunities: Having a true AI companion is priceless. Even quantized smaller models are encyclopedias in themselves - with ability to make api calls.
