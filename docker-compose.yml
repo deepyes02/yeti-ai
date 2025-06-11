@@ -14,9 +14,9 @@ services:
       - EXCHANGE_CA=${EXCHANGE_CA}
       - EXCHANGE_JP=${EXCHANGE_JP}
       - EXCHANGE_SG=${EXCHANGE_SG}
+      - POSTGRESQL_URL=${POSTGRESQL_URL}
     volumes:
       - ./app:/app/app
-      - ./db:/app
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
   db:
     image: postgres:15
