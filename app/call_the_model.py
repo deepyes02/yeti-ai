@@ -1,4 +1,4 @@
-from langchain_core.messages import HumanMessage, AIMessageChunk
+from langchain_core.messages import HumanMessage, AIMessageChunk, SystemMessage
 from langgraph.graph import START, MessagesState, StateGraph, END
 from langgraph.prebuilt import create_react_agent, ToolNode
 import logging, os
@@ -23,34 +23,29 @@ model = load_model()
 agent_node = create_react_agent(model, [get_weather, get_exchange_rates])
 tool_node = ToolNode([get_weather, get_exchange_rates])
 
-def call_model(state: MessagesState):
-  prompt = prompt_template.invoke(dict(state))
-  response = model.invoke(prompt)
-  return {"messages": state["messages"] + [response]}
-
 def final_answer(state: MessagesState):
   return state
 
-thread_id = 6
+thread_id = 9
 projectName = os.environ.get("LANGSMITH_PROJECT")
 def agent_router(state):
     messages = state['messages']
     last = messages[-1]
     if getattr(last, "tool_calls", None) or getattr(last, "tool_call", None):
       return "tools"
-    return END
+    return "final_answer"
 
 ##nodes and edges 
 workflow = StateGraph(state_schema=MessagesState)
 workflow.add_node("agent", agent_node)
 workflow.add_node("tools", tool_node)
-workflow.add_edge(START, "agent")
+workflow.add_node("final_answer", final_answer)
 
+workflow.add_edge(START, "agent")
 workflow.add_conditional_edges("agent", path=agent_router)
 workflow.add_edge("tools", "agent")
+workflow.add_edge("final_answer", END)
 
-workflow.add_node("call_model", call_model)
-workflow.add_edge("call_model", END)
 
 # We are now using sqlite to remember the context and hence for the agent to remember us by our 
 # user id 
@@ -64,7 +59,7 @@ def stream_model_output_new(prompt:str):
     checkpointer.setup()
     app = workflow.compile(checkpointer=checkpointer)
     # This function is for streaming the output of the model
-    state = {"messages" : [HumanMessage(content=prompt)]}
+    state = {"messages" : [SystemMessage(content="You are a helpful assistant. When you receive tool results, always summarize them in natural language for the user. Do not show tool call instructions or raw JSON. Only provide the final answer in a user-friendly way."),HumanMessage(content=prompt)]}
     for chunk, _ in app.stream(state,
     config={
       "configurable" : {"thread_id" : thread_id},

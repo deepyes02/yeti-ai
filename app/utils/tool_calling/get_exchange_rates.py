@@ -26,5 +26,5 @@ def get_exchange_rates(from_currency: str, to_currency: str):
         )
     for rate in exchange_rate_data:
       if rate["sender_currency"] == from_currency and rate["receiver_currency"] == to_currency:
-        return f"%s" % rate["receiver_unit"]
+        return f"The exchange rate from {from_currency} to {to_currency} is {rate['receiver_unit']}."
     return f"Sorry we don't have exchange rate for {from_currency} to {to_currency}."
