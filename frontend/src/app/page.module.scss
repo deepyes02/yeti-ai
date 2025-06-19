@@ -48,28 +48,7 @@
 	margin-bottom: 2px;
 }
 
-.inputBar {
-	display: flex;
-	gap: 10px;
-	padding: 24px 24px 80px;
-	box-shadow: 0 -2px 16px rgba(15, 23, 42, 0.1);
-}
 
-.input {
-	flex: 1;
-	padding: 16px;
-	border-radius: 10px;
-	border: none;
-	font-size: 1.08rem;
-	outline: none;
-	background: #e0e3e9;
-	color: #424549;
-	box-shadow: 0 1px 4px rgba(30, 41, 59, 0.1);
-}
-
-.input::placeholder {
-	color: #64748b;
-}
 
 .sendButton {
 	background: linear-gradient(135deg, #2563eb 60%, #0ea5e9 100%);
@@ -98,4 +77,20 @@
 }
 .aiResponseBox {
 	margin: 20px auto;
+}
+
+.editablePromptInputBar{
+	max-width: calc(100% - 48px);
+	width: 900px;
+	margin: 20px auto;
+	padding: 24px 16px;
+	border-radius: 10px;
+	max-height: 200px;
+	overflow-y: auto;
+	border: none;
+	font-size: 1.08rem;
+	outline: none;
+	background: #e0e3e9;
+	color: #424549;
+	box-shadow: 0 1px 4px rgba(30, 41, 59, 0.1);
 }

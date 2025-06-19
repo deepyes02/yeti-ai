@@ -9,6 +9,38 @@ type RoleAndMessage = {
   think?: string;
 };
 
+type EditablePromptInputBarProps = {
+  input: string;
+  setInput: React.Dispatch<React.SetStateAction<string>>;
+};
+
+function EditablePromptInputBar({ input, setInput }: EditablePromptInputBarProps) {
+  const editableRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (editableRef.current && input === '') {
+      editableRef.current.innerHTML = ''; // clear if input is empty
+    }
+  }, [input]);
+
+
+  const handleInput = () => {
+    const text = editableRef.current?.innerText;
+    setInput(text ?? "");
+  };
+
+  return (
+    <div
+      ref={editableRef}
+      className={`${styles.editablePromptInputBar} ${!input ? styles.empty : ''}`}
+      contentEditable
+      onInput={handleInput}
+      suppressContentEditableWarning={true}
+      data-placeholder="Type your message..."
+    />
+  );
+}
+
 export default function Home() {
   const [messages, setMessages] = useState<RoleAndMessage[] | []>([]);
   const [input, setInput] = useState("");
@@ -16,6 +48,7 @@ export default function Home() {
   const socket = useRef<WebSocket | null>(null);
   const aiMessageBuffer = useRef("")
   const chunk_ = useRef("")
+
   useEffect(() => {
     socket.current = new WebSocket("ws://localhost:8000/ws");
     // socket.current = new WebSocket("ws://localhost:8000/ws-decoy");
@@ -66,6 +99,7 @@ export default function Home() {
     }
   }
 
+
   return (
     <div className={styles.chatPageWrapper}>
       <div className={styles.chatContainer}>
@@ -73,23 +107,22 @@ export default function Home() {
           {messages.map((msg, i) =>
             msg.role === 'user' ?
               <div key={i} className={styles.userMessage}>{msg.content}</div> :
-                <div className={styles.aiResponseBox} key={i}>
-                  {msg.think && <div className={styles.thinkMessage}><p>{msg.think}</p></div>}
-                  {msg.content && <MarkdownRenderer content={msg.content}/>}
-                </div>
+              <div className={styles.aiResponseBox} key={i}>
+                {msg.think && <div className={styles.thinkMessage}><p>{msg.think}</p></div>}
+                {msg.content && <MarkdownRenderer content={msg.content} />}
+              </div>
           )}
           <div ref={messagesEndRef} />
         </div>
-        <form className={styles.inputBar} onSubmit={sendMessage}>
-          <input
-            className={styles.input}
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
-          />
-          <button className={styles.sendButton} type="submit">Send</button>
-        </form>
+        <EditablePromptInputBar input={input} setInput={setInput} />
+        <button
+          className={styles.sendButton}
+          type="submit"
+          onClick={sendMessage}
+        >
+          Send
+        </button>
+
       </div>
     </div>
   );
