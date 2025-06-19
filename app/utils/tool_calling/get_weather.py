@@ -4,51 +4,41 @@ import requests
 import json
 @tool
 def get_weather(city: str) -> str:
-    """Get the weather for a given city with comprehensive error handling"""
-    
+    """Get the weather for a given city with comprehensive error handling, answer with appropriate emojis"""
     # Input validation
     if not city or not isinstance(city, str):
         return "Error: Please provide a valid city name."
-    
     city = city.strip()
     if not city:
         return "Error: City name cannot be empty."
-    
     # API key validation
-    WEATHER_API_KEY = os.getenv("WEATHER_API_KEY", "e304ff86fb2d4b5a94980650251906")
+    WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
     if not WEATHER_API_KEY:
         return "Error: Weather API key is not configured."
-    
     try:
         # Construct API URL
         url = f"http://api.weatherapi.com/v1/current.json?key={WEATHER_API_KEY}&q={city}&aqi=no"
-        
         # Make API request with timeout
         response = requests.get(url, timeout=10)
-        
         # Handle different HTTP status codes
         if response.status_code == 200:
             try:
                 data = response.json()
-                
                 # Validate response structure
                 if "location" not in data or "current" not in data:
                     return f"Error: Unexpected response format for {city}."
-                
                 if "name" not in data["location"] or "temp_c" not in data["current"]:
                     return f"Error: Missing weather data for {city}."
-                
                 # Extract data safely
                 location = data["location"]["name"]
                 temp_c = data["current"]["temp_c"]
                 condition = data["current"].get("condition", {}).get("text", "")
-                
+
                 # Format response
                 weather_info = f"The weather in {location} is currently {temp_c}°C"
                 if condition:
                     weather_info += f" with {condition.lower()}"
                 weather_info += "."
-                print(weather_info)
                 return weather_info
                 
             except json.JSONDecodeError:
