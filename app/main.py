@@ -9,6 +9,13 @@ import logging
 # from app.utils.load_environment import load_environment_variables
 # load_environment_variables()
 app = FastAPI()
+app.add_middleware(
+  CORSMiddleware,
+  allow_origins=["http://localhost:3000"],
+  allow_credentials=True,
+  allow_methods=["*"],
+  allow_headers=["*"]
+)
 
 import threading
 from queue import Queue
