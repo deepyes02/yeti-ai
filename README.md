@@ -1,12 +1,12 @@
-### Updates 11-June-2025
-1. Integration with langGraph ecosystem for context awareness and tool calling.
-2. Web interface with an exposed chatbot for prompt input.
-3. Postgresql database for storing conversation history.
-
 ## Yeti - An agentic artifical intelligence framework 
 <img src="yeti-logo.png" alt="Yeti is a mythical mountain creature that several people have reported sightings, looks like human and more intelligent" height="180" width="200">
 
 Using models with tool-calling capability, this ai framework is able to converse and run api functions. Very good for private use of AI without spilling personal data.
+
+### Updates 11-June-2025
+1. Integration with langGraph ecosystem for context awareness and tool calling.
+2. Web interface with an exposed chatbot for prompt input.
+3. Postgresql database for storing conversation history.
 
 ### Still Under developments and extendable features
 1. Adding sessions and unique thread ids for classifying conversations based on topic.
@@ -20,7 +20,7 @@ Using models with tool-calling capability, this ai framework is able to converse
 
 ### Requirements
 1. Install Ollama - https://ollama.com/download
-2. Download and run: `ollama run llama3.2:latest`. The model will take some time to download.
+2. Download llama3.2 model (able to call tools): `ollama pull llama3.2:latest` or `ollama run llama3.2:latest` . The model will take some time to download.
 
 ```bash
 $ ollama ls
@@ -29,7 +29,7 @@ qwen3:latest       500a1f067a9f    5.2 GB    6 days ago #thinking / non-thinking
 mistral:latest     f974a74358d6    4.1 GB    6 days ago #non-thinking / not great tool support
 gemma3:4b          a2af6cc3eb7f    3.3 GB    2 weeks ago #doesn't support tool_calling
 deepseek-r1:8b     28f8fd6cdc67    4.9 GB    4 months ago #thiking
-llama3.2:latest    a80c4f17acd5    2.0 GB    7 months ago #not thinking / tool support
+llama3.2:latest    a80c4f17acd5    2.0 GB    7 months ago #not thinking / tool support 
 ```
 3. And make sure the model name is passed in [call_the_model.py](./app/call_the_model.py)
 ```py
@@ -43,9 +43,8 @@ model = ChatOllama(
   repeat_penalty=1.2
 )
 ```
-3. Install docker
 
-### Get started 
+### Clone this repository and install docker
 In the project root, run
 ```bash
 git clone https://github.com/deepyes02/yeti-ai # clone this repo
