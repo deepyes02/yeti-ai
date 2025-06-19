@@ -1,17 +1,17 @@
 ### Updates 11-June-2025
 1. Integration with langGraph ecosystem for context awareness and tool calling.
-2. Web server with an exposed chatbot for taking in prompts.
+2. Web interface with an exposed chatbot for prompt input.
 3. Postgresql database for storing conversation history.
 
-## Yeti AI - your ai companion
-<img src="yeti.png" alt="Yeti is a mythical mountain creature that several people have reported sightings, looks like human and more intelligent" height="180" width="300">
+## Yeti - An agentic artifical intelligence framework 
+<img src="yeti-logo.png" alt="Yeti is a mythical mountain creature that several people have reported sightings, looks like human and more intelligent" height="180" width="200">
 
-### An agentic artifical intelligence framework 
-Using open source models with tool-calling capability. At individual level it provides privacy running entirely offline. Only accesses internet when needed, i.e for search.
+Using models with tool-calling capability, this ai framework is able to converse and run api functions. Very good for private use of AI without spilling personal data.
 
 ### Still Under developments and extendable features
-1. Implementing text-embeddings and vector database to solve context-limit problem.
-2. Adding a free search backend for internet search for knowledge.
+1. Adding sessions and unique thread ids for classifying conversations based on topic.
+1. Implementing text-embeddings and vector database to solve context-limit problem and intellectual response based on past conversation.
+2. Adding a search backend for browsing internet for overcoming knowledge cut off.
 4. Voice controls & conversation (not urgent).
 5. Image analysis. (not so urgent)
 
