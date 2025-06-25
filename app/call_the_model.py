@@ -23,19 +23,24 @@ model = load_model()
 agent_node = create_react_agent(model, [get_weather, get_exchange_rates])
 tool_node = ToolNode([get_weather, get_exchange_rates])
 
+
 def final_answer(state: MessagesState):
-  return state
+    return state
+
 
 thread_id = 9
 projectName = os.environ.get("LANGSMITH_PROJECT")
+
+
 def agent_router(state):
-    messages = state['messages']
+    messages = state["messages"]
     last = messages[-1]
     if getattr(last, "tool_calls", None) or getattr(last, "tool_call", None):
-      return "tools"
+        return "tools"
     return "final_answer"
 
-##nodes and edges 
+
+##nodes and edges
 workflow = StateGraph(state_schema=MessagesState)
 workflow.add_node("agent", agent_node)
 workflow.add_node("tools", tool_node)
@@ -50,22 +55,32 @@ checkpointer = checkpointer_context_manager.__enter__()
 checkpointer.setup()
 app = workflow.compile(checkpointer=checkpointer)
 
-# We are now using sqlite to remember the context and hence for the agent to remember us by our 
-# user id 
+
+# We are now using sqlite to remember the context and hence for the agent to remember us by our
+# user id
 # from langgraph.checkpoint.sqlite import SqliteSaver
-def stream_model_output_new(prompt:str):
-  """
-  Here we are programming the model to get system level prompts, so that it can stay structured for the user. Always write in Markdown format, so it's easier for users to visualize your response.
-  """
+def stream_model_output_new(prompt: str):
+    """
+    Here we are programming the model to get system level prompts, so that it can stay structured for the user. Always write in Markdown format, so it's easier for users to visualize your response.
+    """
     # This function is for streaming the output of the model
-  state = {"messages" : [SystemMessage(content="You are a helpful assistant. When you receive tool results, always summarize them in natural language for the user. Do not show tool call instructions or raw JSON. Only provide the final answer in a user-friendly way. Do not recommend commercial brand names like Accuweather or something else if it seems like user needs more information."),HumanMessage(content=prompt)]}
-  for chunk, _ in app.stream(state,
-  config={
-    "configurable" : {"thread_id" : thread_id},
-    "run_name" : f"{projectName}",
-    "metadata" : {"user_id" : thread_id}
-      },
-  stream_mode="messages"):
-    logging.warning(chunk)
-    if isinstance(chunk, AIMessageChunk):
-      yield chunk.content
+    state = {
+        "messages": [
+            SystemMessage(
+                content="You are a helpful assistant. When you receive tool results, always summarize them in natural language for the user. Do not show tool call instructions or raw JSON. Only provide the final answer in a user-friendly way. Do not recommend commercial brand names like Accuweather or something else if it seems like user needs more information."
+            ),
+            HumanMessage(content=prompt),
+        ]
+    }
+    for chunk, _ in app.stream(
+        state,
+        config={
+            "configurable": {"thread_id": thread_id},
+            "run_name": f"{projectName}",
+            "metadata": {"user_id": thread_id},
+        },
+        stream_mode="messages",
+    ):
+        logging.warning(chunk)
+        if isinstance(chunk, AIMessageChunk):
+            yield chunk.content
