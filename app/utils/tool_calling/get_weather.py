@@ -3,18 +3,19 @@ import os
 import requests
 import json
 @tool
-def get_weather(city: str) -> str:
-    """Get the weather for a given city with comprehensive error handling, answer with appropriate emojis"""
+def get_weather(city: str) -> dict:
+    """Get the weather for a given city with comprehensive error handling. Returns a dictionary with a summary string and raw weather data.
+    """
     # Input validation
     if not city or not isinstance(city, str):
-        return "Error: Please provide a valid city name."
+        return {"error": "Error: Please provide a valid city name."}
     city = city.strip()
     if not city:
-        return "Error: City name cannot be empty."
+        return {"error": "Error: City name cannot be empty."}
     # API key validation
     WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
     if not WEATHER_API_KEY:
-        return "Error: Weather API key is not configured."
+        return {"error": "Error: Weather API key is not configured."}
     try:
         # Construct API URL
         url = f"http://api.weatherapi.com/v1/current.json?key={WEATHER_API_KEY}&q={city}&aqi=no"
@@ -26,44 +27,48 @@ def get_weather(city: str) -> str:
                 data = response.json()
                 # Validate response structure
                 if "location" not in data or "current" not in data:
-                    return f"Error: Unexpected response format for {city}."
+                    return {"error": f"Error: Unexpected response format for {city}."}
                 if "name" not in data["location"] or "temp_c" not in data["current"]:
-                    return f"Error: Missing weather data for {city}."
+                    return {"error": f"Error: Missing weather data for {city}."}
                 # Extract data safely
                 location = data["location"]["name"]
                 temp_c = data["current"]["temp_c"]
                 condition = data["current"].get("condition", {}).get("text", "")
+                condition_icon = data["current"].get("condition", {}).get("icon", "")
 
                 # Format response
                 weather_info = f"The weather in {location} is currently {temp_c}°C"
                 if condition:
-                    weather_info += f" with {condition.lower()}"
-                weather_info += "."
-                return weather_info
+                    weather_info += f" with {condition.lower()} <img src='https:{condition_icon}' alt='{condition}'/>"
+                weather_info += "Feel free to ask about humidity, UV index or wind speeds."
+                return {
+                    "summary": weather_info,
+                    "raw": data
+                }
                 
             except json.JSONDecodeError:
-                return f"Error: Invalid response format from weather service for {city}."
+                return {"error": f"Error: Invalid response format from weather service for {city}."}
             except KeyError as e:
-                return f"Error: Missing expected data in weather response for {city}: {str(e)}"
+                return {"error": f"Error: Missing expected data in weather response for {city}: {str(e)}"}
                 
         elif response.status_code == 400:
-            return f"Error: '{city}' is not a valid location. Please check the city name."
+            return {"error": f"Error: '{city}' is not a valid location. Please check the city name."}
         elif response.status_code == 401:
-            return "Error: Weather API key is invalid or expired."
+            return {"error": "Error: Weather API key is invalid or expired."}
         elif response.status_code == 403:
-            return "Error: Access to weather API is forbidden. Check your API key permissions."
+            return {"error": "Error: Access to weather API is forbidden. Check your API key permissions."}
         elif response.status_code == 429:
-            return "Error: Too many requests to weather API. Please try again later."
+            return {"error": "Error: Too many requests to weather API. Please try again later."}
         elif response.status_code == 500:
-            return "Error: Weather service is temporarily unavailable. Please try again later."
+            return {"error": "Error: Weather service is temporarily unavailable. Please try again later."}
         else:
-            return f"Error: Weather service returned status {response.status_code}. Please try again later."
+            return {"error": f"Error: Weather service returned status {response.status_code}. Please try again later."}
             
     except requests.exceptions.Timeout:
-        return f"Error: Request timeout while getting weather for {city}. Please try again."
+        return {"error": f"Error: Request timeout while getting weather for {city}. Please try again."}
     except requests.exceptions.ConnectionError:
-        return f"Error: Unable to connect to weather service for {city}. Check your internet connection."
+        return {"error": f"Error: Unable to connect to weather service for {city}. Check your internet connection."}
     except requests.exceptions.RequestException as e:
-        return f"Error: Network error while getting weather for {city}: {str(e)}"
+        return {"error": f"Error: Network error while getting weather for {city}: {str(e)}"}
     except Exception as e:
-        return f"Error: Unexpected error while getting weather for {city}: {str(e)}"
+        return {"error": f"Error: Unexpected error while getting weather for {city}: {str(e)}"}
