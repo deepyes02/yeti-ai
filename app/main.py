@@ -10,19 +10,19 @@ import logging
 # load_environment_variables()
 app = FastAPI()
 app.add_middleware(
-  CORSMiddleware,
-  allow_origins=["http://localhost:3000"],
-  allow_credentials=True,
-  allow_methods=["*"],
-  allow_headers=["*"]
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 import threading
 from queue import Queue
 
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    logging.warning("Inside web socket")
     await websocket.accept()
     while True:
         try:
@@ -33,6 +33,7 @@ async def websocket_endpoint(websocket: WebSocket):
         q = Queue()
 
         def produce():
+            logging.warning(f"User prompt: {prompt}")
             for chunk in stream_model_output_new(prompt):
                 q.put(chunk)
             q.put(None)  # Sentinel value
@@ -44,6 +45,7 @@ async def websocket_endpoint(websocket: WebSocket):
             if chunk is None:
                 break
             await websocket.send_text(chunk)
+
 
 @app.websocket("/ws-decoy")
 async def mock_stream(websocket: WebSocket):
@@ -59,5 +61,5 @@ async def mock_stream(websocket: WebSocket):
 
         words = response.split(" ")
         for word in response:
-          await websocket.send_text(word)
-          await asyncio.sleep(0.01)
+            await websocket.send_text(word)
+            await asyncio.sleep(0.01)

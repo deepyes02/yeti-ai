@@ -1,5 +1,7 @@
 from langchain.agents import tool
 import os, requests, json
+
+
 @tool
 def get_exchange_rates(from_currency: str, to_currency: str):
     """Get exchange rate for a given currency pair. Currently available source currency is USD to JPY and JPY to NPR, BDT, INR, PHP, IDR and VND."""
@@ -25,6 +27,10 @@ def get_exchange_rates(from_currency: str, to_currency: str):
             }
         )
     for rate in exchange_rate_data:
-      if rate["sender_currency"] == from_currency and rate["receiver_currency"] == to_currency:
-        return f"The exchange rate from {from_currency} to {to_currency} is {rate['receiver_unit']}."
+        if (
+            rate["sender_currency"] == from_currency
+            and rate["receiver_currency"] == to_currency
+        ):
+            summary = f"The exchange rate from {from_currency} to {to_currency} is {rate['receiver_unit']}."
+            return {"summary": summary, "raw": exchange_rate_data}
     return f"Sorry we don't have exchange rate for {from_currency} to {to_currency}."

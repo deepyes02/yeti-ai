@@ -45,7 +45,6 @@ langgraph-checkpoint-postgres==2.0.21
 langgraph-checkpoint-sqlite==2.0.10
 langgraph-prebuilt==0.2.2
 langgraph-sdk==0.1.70
-langsmith==0.3.45
 lxml==5.4.0
 marshmallow==3.26.1
 matplotlib-inline==0.1.7
