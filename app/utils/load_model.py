@@ -14,10 +14,10 @@ def load_model():
     ]
     model = ChatOllama(
         base_url=os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434"),
-        model=models[1],
+        model=models[0],
         num_ctx=12000,
-        temperature=0.3,
-        top_p=0.7,
-        repeat_penalty=1.2,
+        temperature=0.7,
+        top_p=0.95,
+        repeat_penalty=1.1,
     )
     return model

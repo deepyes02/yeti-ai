@@ -2,7 +2,7 @@ version: "3.9"
 services:
   backend:
     build: .
-    container_name: 'api_backend'
+    container_name: 'backend'
     ports:
       - "8000:8000"
     environment:
@@ -27,7 +27,7 @@ services:
       POSTGRES_USER: deepyes02
       POSTGRES_PASSWORD: yEti-2025-yAk-ai
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - database:/var/lib/postgresql/data
     ports:
       - "5432:5432"
   pgadmin:
@@ -43,7 +43,7 @@ services:
     depends_on:
       - db
     volumes:
-      - pgadmin_data:/var/lib/pgadmin
+      - pgadmin:/var/lib/pgadmin
   frontend:
     build: ./frontend
     container_name : web
@@ -57,5 +57,5 @@ services:
       - ./frontend:/app
     command: npm run dev
 volumes:
-  pg_data:
-  pgadmin_data:
+  database:
+  pgadmin:

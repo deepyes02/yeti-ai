@@ -10,6 +10,7 @@ from app.utils.tool_calling.get_exchange_rates import get_exchange_rates
 from app.utils.tool_calling.get_weather import get_weather
 from langgraph.checkpoint.postgres import PostgresSaver
 from langchain_core.runnables import RunnableConfig
+from app.utils.system_prompt import system_prompt
 
 load_dotenv()
 
@@ -17,14 +18,11 @@ conn = os.environ.get("POSTGRESQL_URL", "")
 if not conn:
     raise ValueError("POSTGRESQL_URL environment variable is not set.")
 
-prompt_template = system_prompt()
 model = load_model()
 
 ##describe agent node and tool node
 agent_node = create_react_agent(model, [get_weather, get_exchange_rates])
 tool_node = ToolNode([get_weather, get_exchange_rates])
-
-projectName = os.environ.get("LANGSMITH_PROJECT")
 
 
 def agent_router(state):
@@ -55,13 +53,12 @@ app = workflow.compile(checkpointer=checkpointer)
 # from langgraph.checkpoint.sqlite import SqliteSaver
 
 
-def stream_model_output_new(prompt: str, thread_id=2):
+def stream_model_output_new(prompt: str, thread_id=100):
     """
     Here we are programming the model to get system level prompts, so that it can stay structured for the user. Always write in Markdown format, so it's easier for users to visualize your response.
     """
     config: RunnableConfig = {
         "configurable": {"thread_id": thread_id},
-        "run_name": f"{projectName}",
         "metadata": {"user_id": thread_id},
     }
     prev_state = app.get_state(config=config)
@@ -78,9 +75,7 @@ def stream_model_output_new(prompt: str, thread_id=2):
         logging.warning("No previous state found, initializing new state.")
         state = {
             "messages": [
-                SystemMessage(
-                    content="You are a helpful assistant. When you receive tool results, always summarize them in natural language for the user. Do not show tool call instructions or raw JSON."
-                ),
+                SystemMessage(content=system_prompt()),
                 HumanMessage(content=prompt),
             ]
         }
