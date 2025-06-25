@@ -114,14 +114,16 @@ export default function Home() {
           )}
           <div ref={messagesEndRef} />
         </div>
-        <EditablePromptInputBar input={input} setInput={setInput} />
-        <button
-          className={styles.sendButton}
-          type="submit"
-          onClick={sendMessage}
-        >
-          Send
-        </button>
+        <div className={styles.inputWrapper}>
+          <EditablePromptInputBar input={input} setInput={setInput} />
+          <button
+            className={styles.sendButton}
+            type="submit"
+            onClick={sendMessage}
+          >
+            Send
+          </button>
+        </div>
 
       </div>
     </div>
