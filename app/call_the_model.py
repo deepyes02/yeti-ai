@@ -53,7 +53,7 @@ app = workflow.compile(checkpointer=checkpointer)
 # from langgraph.checkpoint.sqlite import SqliteSaver
 
 
-def stream_model_output_new(prompt: str, thread_id=100):
+def stream_model_output_new(prompt: str, thread_id=36):
     """
     Here we are programming the model to get system level prompts, so that it can stay structured for the user. Always write in Markdown format, so it's easier for users to visualize your response.
     """
