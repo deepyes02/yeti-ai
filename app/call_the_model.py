@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 from app.utils.tool_calling.get_exchange_rates import get_exchange_rates
 from app.utils.tool_calling.get_weather import get_weather
+from app.utils.tool_calling.web_search_summary import make_search_tool
 from langgraph.checkpoint.postgres import PostgresSaver
 from langchain_core.runnables import RunnableConfig
 
@@ -18,10 +19,11 @@ if not conn:
     raise ValueError("POSTGRESQL_URL environment variable is not set.")
 
 model = load_model()
+search_tool = make_search_tool(model)
 
 ##describe agent node and tool node
-agent_node = create_react_agent(model, [get_weather, get_exchange_rates])
-tool_node = ToolNode([get_weather, get_exchange_rates])
+agent_node = create_react_agent(model, [get_weather, get_exchange_rates, search_tool])
+tool_node = ToolNode([get_weather, get_exchange_rates, search_tool])
 
 
 def agent_router(state):

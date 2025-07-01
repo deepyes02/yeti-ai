@@ -1,10 +1,12 @@
 from langchain.agents import tool
 import os, requests, json
+import logging
 
 
 @tool
 def get_exchange_rates(from_currency: str, to_currency: str):
     """Get exchange rate for a given currency pair. Currently available source currency is USD to JPY and JPY to NPR, BDT, INR, PHP, IDR and VND."""
+    logging.warning(f"Function get exchange rate called")
     EXCHANGE_JP = os.getenv("EXCHANGE_JP")
     if not EXCHANGE_JP:
         raise ValueError("EXCHANGE_JP environment variable is not set.")
