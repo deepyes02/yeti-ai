@@ -2,6 +2,8 @@ FROM python:3.11.10-slim
 
 WORKDIR /app
 
+ENV TZ="Asia/Tokyo"
+
 # Install gcc and libpq-dev in one step, then clean up, these are needed by python builds
 RUN apt-get update \
     && apt-get upgrade -y \

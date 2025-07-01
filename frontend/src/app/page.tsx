@@ -12,9 +12,10 @@ type RoleAndMessage = {
 type EditablePromptInputBarProps = {
   input: string;
   setInput: React.Dispatch<React.SetStateAction<string>>;
+  onSendMessage: () => void;
 };
 
-function EditablePromptInputBar({ input, setInput }: EditablePromptInputBarProps) {
+function EditablePromptInputBar({ input, setInput, onSendMessage }: EditablePromptInputBarProps) {
   const editableRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,12 +30,20 @@ function EditablePromptInputBar({ input, setInput }: EditablePromptInputBarProps
     setInput(text ?? "");
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+      event.preventDefault();
+      onSendMessage();
+    }
+  };
+
   return (
     <div
       ref={editableRef}
       className={`${styles.editablePromptInputBar} ${!input ? styles.empty : ''}`}
       contentEditable
       onInput={handleInput}
+      onKeyDown={handleKeyDown}
       suppressContentEditableWarning={true}
       data-placeholder="Type your message..."
     />
@@ -115,7 +124,7 @@ export default function Home() {
           <div ref={messagesEndRef} />
         </div>
         <div className={styles.inputWrapper}>
-          <EditablePromptInputBar input={input} setInput={setInput} />
+          <EditablePromptInputBar input={input} setInput={setInput} onSendMessage={sendMessage} />
           <button
             className={styles.sendButton}
             type="submit"
@@ -124,8 +133,12 @@ export default function Home() {
             Send
           </button>
         </div>
+        <div className={styles.disclaimer}>
+          AI can make mistakes, so always verify the information it provides. Ask about weather, exchange rates, current date and time, and search the web for information. You can also ask it to think about a problem before answering. Use <code>Cmd + Enter</code> or <code>Ctrl + Enter</code> to send a message.
+        </div>
 
       </div>
     </div>
   );
 }
+
