@@ -10,7 +10,6 @@ from app.utils.tool_calling.get_exchange_rates import get_exchange_rates
 from app.utils.tool_calling.get_weather import get_weather
 from langgraph.checkpoint.postgres import PostgresSaver
 from langchain_core.runnables import RunnableConfig
-from app.utils.system_prompt import system_prompt
 
 load_dotenv()
 

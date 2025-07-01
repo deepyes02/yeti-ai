@@ -1,26 +1,18 @@
 version: "3.9"
 services:
   backend:
+    env_file:
+      - .env
     build: .
     container_name: 'backend'
     ports:
       - "8000:8000"
-    environment:
-      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL}
-      # - LANGSMITH_TRACING=${LANGSMITH_TRACING}
-      # - LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
-      # - LANGSMITH_PROJECT=${LANGSMITH_PROJECT}
-      # - LANGSMITH_ENDPOINT=${LANGSMITH_ENDPOINT}
-      - EXCHANGE_CA=${EXCHANGE_CA}
-      - EXCHANGE_JP=${EXCHANGE_JP}
-      - EXCHANGE_SG=${EXCHANGE_SG}
-      - POSTGRESQL_URL=${POSTGRESQL_URL}
-      - WEATHER_API_KEY=${WEATHER_API_KEY}
     volumes:
       - ./app:/app/app
     # command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
   db:
+    container_name: 'db'
     image: postgres:15
     restart: always
     environment:
@@ -32,6 +24,7 @@ services:
     ports:
       - "5432:5432"
   pgadmin:
+    container_name: 'pgadmin'
     image: dpage/pgadmin4
     logging:
       driver: none
@@ -47,7 +40,7 @@ services:
       - pgadmin:/var/lib/pgadmin
   frontend:
     build: ./frontend
-    container_name : web
+    container_name : frontend
     ports:
       - "3000:3000"
     environment:
