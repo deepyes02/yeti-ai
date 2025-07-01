@@ -41,7 +41,10 @@ def make_search_tool(model):
                 except Exception:
                     continue
 
-        final_input = "Combine and summarize these points:\n\n" + "\n\n".join(summaries)
+        final_input = (
+            "Combine and summarize these points. Make sure you do not repeat what is already said:\n\n"
+            + "\n\n".join(summaries)
+        )
         final_summary = model.invoke(final_input)
         return (
             final_summary.content

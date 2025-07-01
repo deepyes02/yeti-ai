@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from app.utils.tool_calling.get_exchange_rates import get_exchange_rates
 from app.utils.tool_calling.get_weather import get_weather
 from app.utils.tool_calling.web_search_summary import make_search_tool
+from app.utils.tool_calling.current_datetime import make_datetime_tool
 from langgraph.checkpoint.postgres import PostgresSaver
 from langchain_core.runnables import RunnableConfig
 
@@ -20,10 +21,13 @@ if not conn:
 
 model = load_model()
 search_tool = make_search_tool(model)
+datetime_tool = make_datetime_tool()
 
 ##describe agent node and tool node
-agent_node = create_react_agent(model, [get_weather, get_exchange_rates, search_tool])
-tool_node = ToolNode([get_weather, get_exchange_rates, search_tool])
+agent_node = create_react_agent(
+    model, [get_weather, get_exchange_rates, search_tool, datetime_tool]
+)
+tool_node = ToolNode([get_weather, get_exchange_rates, search_tool, datetime_tool])
 
 
 def agent_router(state):
@@ -54,7 +58,7 @@ app = workflow.compile(checkpointer=checkpointer)
 # from langgraph.checkpoint.sqlite import SqliteSaver
 
 
-def stream_model_output_new(prompt: str, thread_id=36):
+def stream_model_output_new(prompt: str, thread_id=9999):
     """
     Here we are programming the model to get system level prompts, so that it can stay structured for the user. Always write in Markdown format, so it's easier for users to visualize your response.
     """
