@@ -33,10 +33,16 @@ async def websocket_endpoint(websocket: WebSocket):
         q = Queue()
 
         def produce():
-            logging.warning(f"User prompt: {prompt}")
-            for chunk in stream_model_output_new(prompt):
-                q.put(chunk)
-            q.put(None)  # Sentinel value
+            try:
+                logging.warning(f"User prompt: {prompt}")
+                for chunk in stream_model_output_new(prompt):
+                    q.put(chunk)
+            except Exception as e:
+                logging.error(f"Error during model stream: {e}", exc_info=True)
+                error_message = f"Sorry, I encountered an error: {e}"
+                q.put(error_message)
+            finally:
+                q.put(None)  # Sentinel value
 
         threading.Thread(target=produce, daemon=True).start()
 

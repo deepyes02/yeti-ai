@@ -34,11 +34,14 @@ def make_search_tool(model):
             if content:
                 prompt = f"Summarize the following content relevant to the question: '{query}'\n\n{content[:2000]}"
                 try:
+                    logging.warning("Model invoked to summarize individual URL")
                     summary = model.invoke(prompt)
                     summaries.append(
                         summary.content if hasattr(summary, "content") else summary
                     )
+
                 except Exception:
+                    logging.warning("Error during url search")
                     continue
 
         final_input = (
@@ -55,5 +58,5 @@ def make_search_tool(model):
     return Tool.from_function(
         name="search_and_summarize",
         func=_search_and_summarize,
-        description="Search the web and summarize the results to answer a user question.",
+        description="Search the web and summarize the results to answer a user question. Do not repeat yourself when summarizing.",
     )

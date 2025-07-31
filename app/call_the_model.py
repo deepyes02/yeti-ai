@@ -22,13 +22,12 @@ if not conn:
 model = load_model()
 search_tool = make_search_tool(model)
 
-##describe agent node and tool node
-agent_node = create_react_agent(
-    model, [get_weather, get_exchange_rates, search_tool, get_current_datetime]
-)
-tool_node = ToolNode(
-    [get_weather, get_exchange_rates, search_tool, get_current_datetime]
-)
+tools = [get_weather, get_exchange_rates, search_tool, get_current_datetime]
+
+## The agent_node is the "brain" that decides which tool to call.
+agent_node = create_react_agent(model, tools)
+## The tool_node is the "hands" that executes the tool.
+tool_node = ToolNode(tools)
 
 
 def agent_router(state):
