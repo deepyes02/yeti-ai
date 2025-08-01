@@ -86,6 +86,10 @@ def stream_model_output_new(prompt: str, thread_id=1):
         }
     else:
         logging.warning("Previous state found, appending to existing messages.")
+        last_msg = prev_state[0]["messages"][-1] if prev_state[0]["messages"] else None
+        if isinstance(last_msg, HumanMessage):
+            # Insert a placeholder assistant message to fix alternation
+            prev_state[0]["messages"].append(AIMessageChunk(content="Okay."))
         prev_state[0]["messages"].append(HumanMessage(content=prompt))
         state = prev_state[0]
 
