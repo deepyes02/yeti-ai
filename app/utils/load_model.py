@@ -1,24 +1,18 @@
-import os
-
-from langchain_ollama import ChatOllama
+from contextlib import redirect_stderr
+from langchain_community.chat_models import ChatLlamaCpp
 
 
 def load_model():
-    models = [
-        "mistral-nemo",
-        "llama3.2:1b",
-        "llama3.2:latest",
-        "gemma3:4b",
-        "granite3.3:8b",
-        "deepseek-r1:8b",
-        "qwen3",
-    ]
-    model = ChatOllama(
-        base_url=os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434"),
-        model=models[0],
-        num_ctx=12000,
-        temperature=0.7,
-        top_p=0.95,
-        repeat_penalty=1.1,
-    )
-    return model
+    log_path = "/Users/deepesh/Desktop/github-projects/ai-agent/app/logs/llama_cpp.log"
+
+    with open(log_path, "w") as log_file, redirect_stderr(log_file):
+        model = ChatLlamaCpp(
+            model_path="/Users/deepesh/llms/mistral-nemo-15.gguf",
+            temperature=0.9,
+            top_p=0.95,
+            n_ctx=12000,
+            repeat_penalty=1.2,
+            n_gpu_layers=-1,
+            verbose=False,
+        )
+        return model

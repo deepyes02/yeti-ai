@@ -1,16 +1,5 @@
 version: "3.9"
 services:
-  backend:
-    env_file:
-      - .env
-    build: .
-    container_name: 'backend'
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./app:/app/app
-    # command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
   db:
     container_name: 'db'
     image: postgres:15
@@ -46,7 +35,7 @@ services:
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
     depends_on:
-      - backend
+      - db
     volumes:
       - ./frontend:/app
     command: npm run dev

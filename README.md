@@ -102,3 +102,5 @@ deactivate ##deactivate virtual environment
 
 ### Inspired by
 ReAct: Synergizing Reasoning and Acting in Language Models - https://arxiv.org/abs/2210.03629
+
+<!-- uvicorn app.main:app --host 0.0.0.0 --port 8000 -->
