@@ -1,0 +1,403 @@
+{
+  "kind": "customsearch#search",
+  "url": {
+    "type": "application/json",
+    "template": "https://www.googleapis.com/customsearch/v1?q={searchTerms}&num={count?}&start={startIndex?}&lr={language?}&safe={safe?}&cx={cx?}&sort={sort?}&filter={filter?}&gl={gl?}&cr={cr?}&googlehost={googleHost?}&c2coff={disableCnTwTranslation?}&hq={hq?}&hl={hl?}&siteSearch={siteSearch?}&siteSearchFilter={siteSearchFilter?}&exactTerms={exactTerms?}&excludeTerms={excludeTerms?}&linkSite={linkSite?}&orTerms={orTerms?}&dateRestrict={dateRestrict?}&lowRange={lowRange?}&highRange={highRange?}&searchType={searchType}&fileType={fileType?}&rights={rights?}&imgSize={imgSize?}&imgType={imgType?}&imgColorType={imgColorType?}&imgDominantColor={imgDominantColor?}&alt=json"
+  },
+  "queries": {
+    "request": [
+      {
+        "title": "Google Custom Search - yen to peso",
+        "totalResults": "166000000",
+        "searchTerms": "yen to peso",
+        "count": 10,
+        "startIndex": 1,
+        "inputEncoding": "utf8",
+        "outputEncoding": "utf8",
+        "safe": "off",
+        "cx": "a0a74277fd80547f9"
+      }
+    ],
+    "nextPage": [
+      {
+        "title": "Google Custom Search - yen to peso",
+        "totalResults": "166000000",
+        "searchTerms": "yen to peso",
+        "count": 10,
+        "startIndex": 11,
+        "inputEncoding": "utf8",
+        "outputEncoding": "utf8",
+        "safe": "off",
+        "cx": "a0a74277fd80547f9"
+      }
+    ]
+  },
+  "context": {
+    "title": "my_personal_engine"
+  },
+  "searchInformation": {
+    "searchTime": 0.447151,
+    "formattedSearchTime": "0.45",
+    "totalResults": "166000000",
+    "formattedTotalResults": "166,000,000"
+  },
+  "items": [
+    {
+      "kind": "customsearch#result",
+      "title": "Japanese yen to Philippine pesos Exchange Rate. Convert JPY ...",
+      "htmlTitle": "Japanese \u003cb\u003eyen\u003c/b\u003e to Philippine \u003cb\u003epesos\u003c/b\u003e Exchange Rate. Convert \u003cb\u003eJPY\u003c/b\u003e ...",
+      "link": "https://wise.com/us/currency-converter/jpy-to-php-rate",
+      "displayLink": "wise.com",
+      "snippet": "Our interactive JPY to PHP chart use real-time mid-market exchange rates and allow you to view historical data up to the last 5 years.",
+      "htmlSnippet": "Our interactive \u003cb\u003eJPY to PHP\u003c/b\u003e chart use real-time mid-market exchange rates and allow you to view historical data up to the last 5 years.",
+      "formattedUrl": "https://wise.com/us/currency-converter/jpy-to-php-rate",
+      "htmlFormattedUrl": "https://wise.com/us/currency-converter/jpy-to-php-rate",
+      "pagemap": {
+        "cse_thumbnail": [
+          {
+            "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoo999t8Cnmcma0B44cQQIw9nYHDFsXUMeAblu7K4M0YT0dc_PCS0ovUY&s",
+            "width": "310",
+            "height": "163"
+          }
+        ],
+        "metatags": [
+          {
+            "og:image": "https://wise.com/public-resources/assets/icons/wise-personal/share_landscape.png",
+            "apple-itunes-app": "app-id=1563772058",
+            "twitter:card": "summary_large_image",
+            "twitter:title": "Japanese yen to Philippine pesos Exchange Rate. Convert JPY/PHP - Wise",
+            "og:type": "website",
+            "og:site_name": "Wise",
+            "twitter:widgets:csp": "on",
+            "og:title": "Japanese yen to Philippine pesos Exchange Rate. Convert JPY/PHP - Wise",
+            "msapplication-square150x150logo": "https://wise.com/public-resources/assets/icons/wise-personal/mstile_150x150.png",
+            "twitter:creator": "@wise",
+            "og:description": "Convert JPY to PHP with the Wise Currency Converter. Analyze historical currency charts or live Japanese yen / Philippine peso rates and get free rate alerts directly to your email.",
+            "twitter:image:src": "https://wise.com/public-resources/assets/icons/wise-personal/share_landscape.png",
+            "fb:app_id": "274548709260402",
+            "twitter:site": "@wise",
+            "viewport": "initial-scale=1.0, width=device-width",
+            "twitter:description": "Convert JPY to PHP with the Wise Currency Converter. Analyze historical currency charts or live Japanese yen / Philippine peso rates and get free rate alerts directly to your email.",
+            "og:locale": "en_GB",
+            "og:url": "https://wise.com/gb/currency-converter/jpy-to-php-rate",
+            "twitter:account_id": "1510092490"
+          }
+        ],
+        "cse_image": [
+          {
+            "src": "https://wise.com/public-resources/assets/icons/wise-personal/share_landscape.png"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "1 JPY to PHP - Japanese Yen to Philippine Pesos Exchange Rate",
+      "htmlTitle": "1 \u003cb\u003eJPY to PHP\u003c/b\u003e - Japanese Yen to Philippine Pesos Exchange Rate",
+      "link": "https://www.xe.com/currencyconverter/convert/?Amount=1&From=JPY&To=PHP",
+      "displayLink": "www.xe.com",
+      "snippet": "Get the latest 1 Japanese Yen to Philippine Peso rate for FREE with the original Universal Currency Converter. Set rate alerts for JPY to PHP and learn more ...",
+      "htmlSnippet": "Get the latest 1 Japanese Yen to Philippine Peso rate for FREE with the original Universal Currency Converter. Set rate alerts for \u003cb\u003eJPY to PHP\u003c/b\u003e and learn more&nbsp;...",
+      "formattedUrl": "https://www.xe.com/currencyconverter/convert/?Amount=1&From...",
+      "htmlFormattedUrl": "https://www.xe.com/currencyconverter/convert/?Amount=1&amp;From...",
+      "pagemap": {
+        "metatags": [
+          {
+            "msapplication-tilecolor": "#da532c",
+            "theme-color": "#ffffff",
+            "viewport": "width=device-width",
+            "facebook-domain-verification": "sze3rm79t2i57th3mzy1thgmvsq16o"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "JPY to PHP Currency Converter | Western Union JP",
+      "htmlTitle": "\u003cb\u003eJPY to PHP\u003c/b\u003e Currency Converter | Western Union JP",
+      "link": "https://www.westernunion.com/jp/en/currency-converter/jpy-to-php-rate.html",
+      "displayLink": "www.westernunion.com",
+      "snippet": "Convert JPY to PHP with the Western Union currency converter.Send Japanese Yen and your receiver will get Philippine Peso in minutes.",
+      "htmlSnippet": "Convert \u003cb\u003eJPY to PHP\u003c/b\u003e with the Western Union currency converter.Send Japanese Yen and your receiver will get Philippine Peso in minutes.",
+      "formattedUrl": "https://www.westernunion.com/jp/en/currency.../jpy-to-php-rate.html",
+      "htmlFormattedUrl": "https://www.westernunion.com/jp/en/currency.../jpy-to-php-rate.html",
+      "pagemap": {
+        "metatags": [
+          {
+            "og:type": "website",
+            "og:site_name": "Western Union Money Transfer",
+            "viewport": "width=device-width,initial-scale=1,shrink-to-fit=no",
+            "og:title": "JPY to PHP Currency Converter | Western Union JP",
+            "og:url": "https://www.westernunion.com/jp/en/currency-converter/jpy-to-php-rate.html",
+            "og:description": "Convert JPY to PHP with the Western Union currency converter.Send Japanese Yen and your receiver will get Philippine Peso in minutes."
+          }
+        ]
+      }
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "Convert Japanese Yen ({sendCountryName}) to Philippine Peso ...",
+      "htmlTitle": "Convert Japanese \u003cb\u003eYen\u003c/b\u003e ({sendCountryName}) to Philippine \u003cb\u003ePeso\u003c/b\u003e ...",
+      "link": "https://www.worldremit.com/en/currency-converter/1-jpy_jp-php_ph",
+      "displayLink": "www.worldremit.com",
+      "snippet": "Convert Japanese Yen to Philippine Peso with the WorldRemit currency converter, check the latest JPY to PHP exchange rates for free.",
+      "htmlSnippet": "Convert Japanese Yen to Philippine Peso with the WorldRemit currency converter, check the latest \u003cb\u003eJPY to PHP\u003c/b\u003e exchange rates for free.",
+      "formattedUrl": "https://www.worldremit.com/en/currency-converter/1-jpy_jp-php_ph",
+      "htmlFormattedUrl": "https://www.worldremit.com/en/currency-converter/1-jpy_jp-php_ph",
+      "pagemap": {
+        "cse_thumbnail": [
+          {
+            "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKcMtJmbTXJx2WkmiXhgwJOPS7h8PxbnmQyyOZcWjS2etq2ikmVLkbfvI&s",
+            "width": "406",
+            "height": "124"
+          }
+        ],
+        "metatags": [
+          {
+            "og:image": "https://images.ctfassets.net/sb7j5o4oxtgv/1FvblblN5LUCqK4MmyfLn7/0616055f471ec5f3658baf6728140c45/WorldRemit_Identity_2020_RGB_72ppi_PURPLE.png?w=500",
+            "theme-color": "#813FD6",
+            "twitter:card": "summary_large_image",
+            "twitter:title": "Convert Japanese Yen ({sendCountryName}) to Philippine Peso ({receiveCountryName})",
+            "og:type": "website",
+            "og:site_name": "WorldRemit",
+            "contentful_space": "sb7j5o4oxtgv",
+            "og:title": "Convert Japanese Yen ({sendCountryName}) to Philippine Peso ({receiveCountryName})",
+            "twitter:creator": "@WorldRemit",
+            "og:description": "Convert Japanese Yen to Philippine Peso with the WorldRemit currency converter, check the latest JPY to PHP exchange rates for free.",
+            "twitter:image:src": "https://images.ctfassets.net/sb7j5o4oxtgv/1FvblblN5LUCqK4MmyfLn7/0616055f471ec5f3658baf6728140c45/WorldRemit_Identity_2020_RGB_72ppi_PURPLE.png?w=500",
+            "contentful_environment": "master",
+            "next-head-count": "28",
+            "twitter:site": "@WorldRemit",
+            "viewport": "initial-scale=1.0, width=device-width",
+            "twitter:description": "Convert Japanese Yen to Philippine Peso with the WorldRemit currency converter, check the latest JPY to PHP exchange rates for free.",
+            "og:url": "https://www.worldremit.com/en/currency-converter/1-jpy_jp-php_ph"
+          }
+        ],
+        "cse_image": [
+          {
+            "src": "https://images.ctfassets.net/sb7j5o4oxtgv/1FvblblN5LUCqK4MmyfLn7/0616055f471ec5f3658baf6728140c45/WorldRemit_Identity_2020_RGB_72ppi_PURPLE.png?w=500"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "Exchange Rate - Bangko Sentral ng Pilipinas Statistics",
+      "htmlTitle": "Exchange Rate - Bangko Sentral ng Pilipinas Statistics",
+      "link": "https://www.bsp.gov.ph/sitepages/statistics/exchangerate.aspx",
+      "displayLink": "www.bsp.gov.ph",
+      "snippet": "PESO EQUIVALENT. 1 UNITED STATES, DOLLAR, USD, 0.863931, 1.000000, 57.4500. 2 JAPAN, YEN, JPY, 0.005855, 0.006777, 0.3893. 3 UNITED KINGDOM, POUND, GBP ...",
+      "htmlSnippet": "\u003cb\u003ePESO\u003c/b\u003e EQUIVALENT. 1 UNITED STATES, DOLLAR, USD, 0.863931, 1.000000, 57.4500. 2 JAPAN, \u003cb\u003eYEN\u003c/b\u003e, \u003cb\u003eJPY\u003c/b\u003e, 0.005855, 0.006777, 0.3893. 3 UNITED KINGDOM, POUND, GBP&nbsp;...",
+      "formattedUrl": "https://www.bsp.gov.ph/sitepages/statistics/exchangerate.aspx",
+      "htmlFormattedUrl": "https://www.bsp.gov.ph/sitepages/statistics/exchangerate.aspx",
+      "pagemap": {
+        "cse_thumbnail": [
+          {
+            "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLxZh96dRDtCbiPlRMR_TbpPrZBtsakI0mmtF3LAZpIHrCvot2vtAS8-MI&s",
+            "width": "225",
+            "height": "225"
+          }
+        ],
+        "metatags": [
+          {
+            "og:image": "https://www.bsp.gov.ph/SiteAssets/bsplogo4.jpg",
+            "viewport": "width=device-width, initial-scale=1.0",
+            "yandex-verification": "a43fb8f1ae6a5250"
+          }
+        ],
+        "cse_image": [
+          {
+            "src": "https://www.bsp.gov.ph/SiteAssets/bsplogo4.jpg"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "Convert JPY to PHP | Japanese Yen to Philippine Pesos Exchange ...",
+      "htmlTitle": "Convert \u003cb\u003eJPY to PHP\u003c/b\u003e | Japanese Yen to Philippine Pesos Exchange ...",
+      "link": "https://www.revolut.com/currency-converter/convert-jpy-to-php-exchange-rate/",
+      "displayLink": "www.revolut.com",
+      "snippet": "JPY to PHP: Convert Japanese Yen to Philippine Pesos · 1 JPY = 0.38990 PHP · 1. Use our currency converter · 2. Check out our rates · 3. Join Revolut and ...",
+      "htmlSnippet": "\u003cb\u003eJPY to PHP\u003c/b\u003e: Convert Japanese Yen to Philippine Pesos &middot; 1 JPY = 0.38990 PHP &middot; 1. Use our currency converter &middot; 2. Check out our rates &middot; 3. Join Revolut and&nbsp;...",
+      "formattedUrl": "https://www.revolut.com/currency.../convert-jpy-to-php-exchange-rate/",
+      "htmlFormattedUrl": "https://www.revolut.com/currency.../convert-jpy-to-php-exchange-rate/",
+      "pagemap": {
+        "cse_thumbnail": [
+          {
+            "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLw0tu3WDyg1BSAsMnmbJSrVdgKYzMNNflR5mDa_GQq2hZBGSg4n7I6ZZZ&s",
+            "width": "310",
+            "height": "163"
+          }
+        ],
+        "metatags": [
+          {
+            "msapplication-tilecolor": "#191C1F",
+            "og:image": "https://assets.revolut.com/website/images/img-og-retail.png",
+            "twitter:card": "summary_large_image",
+            "og:type": "website",
+            "og:image:alt": "Revolut",
+            "og:image:width": "1200",
+            "theme-color": "#ffffff",
+            "og:site_name": "Revolut",
+            "og:title": "Convert JPY to PHP | Japanese Yen to Philippine Pesos Exchange Rates | Revolut United Kingdom",
+            "og:image:height": "630",
+            "og:description": "Check out our live JPY to PHP exchange rates, then easily convert Japanese Yen to Philippine Pesos in-app. Join 60+ million global customers who trust Revolut for currency exchange and international money transfers.",
+            "twitter:site": "@RevolutApp",
+            "viewport": "initial-scale=1.0, width=device-width",
+            "og:locale": "en_GB",
+            "og:url": "https://www.revolut.com/currency-converter/convert-jpy-to-php-exchange-rate/",
+            "format-detection": "telephone=no"
+          }
+        ],
+        "cse_image": [
+          {
+            "src": "https://assets.revolut.com/website/images/img-og-retail.png"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "Trasferring huge sum (2.5million yen) to own account in the ...",
+      "htmlTitle": "Trasferring huge sum (2.5million \u003cb\u003eyen\u003c/b\u003e) to own account in the ...",
+      "link": "https://www.reddit.com/r/JapanFinance/comments/1cmxm3c/trasferring_huge_sum_25million_yen_to_own_account/",
+      "displayLink": "www.reddit.com",
+      "snippet": "May 8, 2024 ... If you want to convert it to PHP then wise is the wiser option. If you have a foreign deposit account in your PH bank then use Shinsei because ...",
+      "htmlSnippet": "May 8, 2024 \u003cb\u003e...\u003c/b\u003e If you want to convert it to \u003cb\u003ePHP\u003c/b\u003e then wise is the wiser option. If you have a foreign deposit account in your PH bank then use Shinsei because&nbsp;...",
+      "formattedUrl": "https://www.reddit.com/.../trasferring_huge_sum_25million_yen_to_own_a...",
+      "htmlFormattedUrl": "https://www.reddit.com/.../trasferring_huge_sum_25million_\u003cb\u003eyen\u003c/b\u003e_to_own_a...",
+      "pagemap": {
+        "metatags": [
+          {
+            "og:image": "https://share.redd.it/preview/post/1cmxm3c",
+            "theme-color": "#000000",
+            "og:image:width": "1200",
+            "og:type": "website",
+            "og:image:alt": "An image containing a preview of the post",
+            "twitter:card": "summary_large_image",
+            "twitter:title": "r/JapanFinance on Reddit: Trasferring huge sum (2.5million yen) to own account in the Philippines (Peso)",
+            "og:site_name": "Reddit",
+            "og:title": "r/JapanFinance on Reddit: Trasferring huge sum (2.5million yen) to own account in the Philippines (Peso)",
+            "og:image:height": "630",
+            "msapplication-navbutton-color": "#000000",
+            "og:description": "Posted by u/Nuneogun - 0 votes and 8 comments",
+            "twitter:image": "https://share.redd.it/preview/post/1cmxm3c",
+            "apple-mobile-web-app-status-bar-style": "black",
+            "twitter:site": "@reddit",
+            "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+            "apple-mobile-web-app-capable": "yes",
+            "og:ttl": "600",
+            "og:url": "https://www.reddit.com/r/JapanFinance/comments/1cmxm3c/trasferring_huge_sum_25million_yen_to_own_account/?seeker-session=true"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "1,000 JPY to PHP | Convert Japanese Yen to Philippine Pesos ...",
+      "htmlTitle": "1,000 \u003cb\u003eJPY to PHP\u003c/b\u003e | Convert Japanese Yen to Philippine Pesos ...",
+      "link": "https://www.revolut.com/en-US/currency-converter/convert-jpy-to-php-exchange-rate/?amount=1000",
+      "displayLink": "www.revolut.com",
+      "snippet": "Join 60+ million Revolut customers today and convert Japanese Yen to Philippine Pesos at great exchange rates.",
+      "htmlSnippet": "Join 60+ million Revolut customers today and convert Japanese \u003cb\u003eYen\u003c/b\u003e to Philippine \u003cb\u003ePesos\u003c/b\u003e at great exchange rates.",
+      "formattedUrl": "https://www.revolut.com/en-US/.../convert-jpy-to-php-exchange-rate/?...",
+      "htmlFormattedUrl": "https://www.revolut.com/en-US/.../convert-jpy-to-php-exchange-rate/?...",
+      "pagemap": {
+        "cse_thumbnail": [
+          {
+            "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLw0tu3WDyg1BSAsMnmbJSrVdgKYzMNNflR5mDa_GQq2hZBGSg4n7I6ZZZ&s",
+            "width": "310",
+            "height": "163"
+          }
+        ],
+        "metatags": [
+          {
+            "msapplication-tilecolor": "#191C1F",
+            "og:image": "https://assets.revolut.com/website/images/img-og-retail.png",
+            "twitter:card": "summary_large_image",
+            "og:type": "website",
+            "og:image:alt": "Revolut",
+            "og:image:width": "1200",
+            "theme-color": "#ffffff",
+            "og:site_name": "Revolut",
+            "og:title": "1,000 JPY to PHP | Convert Japanese Yen to Philippine Pesos Exchange Rate in the USA | Revolut United States",
+            "og:image:height": "630",
+            "og:description": "Convert 1,000 Japanese Yen to to Philippine Pesos by excellent exchange rate in the USA today. Join 60+ million happy customers and avoid high fees when you convert 1,000 Japanese Yen to to Philippine Pesos and transfer money internationally with Revolut.",
+            "twitter:site": "@RevolutApp",
+            "viewport": "initial-scale=1.0, width=device-width",
+            "og:locale": "en_US",
+            "og:url": "https://www.revolut.com/en-US/currency-converter/convert-jpy-to-php-exchange-rate/?amount=1000",
+            "format-detection": "telephone=no"
+          }
+        ],
+        "cse_image": [
+          {
+            "src": "https://assets.revolut.com/website/images/img-og-retail.png"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "Convert 1 Japanese Yen to Philippine Peso | Ria Money Transfer ...",
+      "htmlTitle": "Convert 1 Japanese \u003cb\u003eYen\u003c/b\u003e to Philippine \u003cb\u003ePeso\u003c/b\u003e | Ria Money Transfer ...",
+      "link": "https://www.riamoneytransfer.com/en-us/rates-conversion/?From=JPY&To=PHP&Amount=1",
+      "displayLink": "www.riamoneytransfer.com",
+      "snippet": "We use the mid-market rate for reference only. Login to see actual send rates. Send money. Conversion rates. Japanese Yen / Philippine Peso. 1 JPY, 0.39057 ...",
+      "htmlSnippet": "We use the mid-market rate for reference only. Login to see actual send rates. Send money. Conversion rates. Japanese \u003cb\u003eYen\u003c/b\u003e / Philippine \u003cb\u003ePeso\u003c/b\u003e. 1 \u003cb\u003eJPY\u003c/b\u003e, 0.39057&nbsp;...",
+      "formattedUrl": "https://www.riamoneytransfer.com/en-us/rates-conversion/?From...1",
+      "htmlFormattedUrl": "https://www.riamoneytransfer.com/en-us/rates-conversion/?From...1",
+      "pagemap": {
+        "cse_thumbnail": [
+          {
+            "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGkZe3UcgGZ3wJs81Yy3oU0iFIWuqverjMqPWIaRhgqoJuXJO-OJdd-cRZ&s",
+            "width": "310",
+            "height": "163"
+          }
+        ],
+        "metatags": [
+          {
+            "og:image": "https://www.riamoneytransfer.com/meta-image.png",
+            "og:type": "website",
+            "twitter:card": "summary",
+            "twitter:title": "Convert 1 Japanese Yen to Philippine Peso | Ria Money Transfer United States",
+            "og:image:alt": "Ria money transfer logo",
+            "og:title": "Convert 1 Japanese Yen to Philippine Peso | Ria Money Transfer United States",
+            "og:description": "Convert 1 Japanese Yen to Philippine Peso with the Ria Money Transfer currency converter. Swap JPY to PHP easily. Find exchange rates to send money quickly and securely from the United States to over 190 countries with Ria Money Transfer.",
+            "twitter:creator": "@RIA",
+            "twitter:image": "https://www.riamoneytransfer.com/meta-image.png",
+            "next-head-count": "51",
+            "twitter:image:alt": "Ria money transfer logo",
+            "viewport": "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1",
+            "twitter:description": "Convert 1 Japanese Yen to Philippine Peso with the Ria Money Transfer currency converter. Swap JPY to PHP easily. Find exchange rates to send money quickly and securely from the United States to over 190 countries with Ria Money Transfer."
+          }
+        ],
+        "cse_image": [
+          {
+            "src": "https://www.riamoneytransfer.com/meta-image.png"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "customsearch#result",
+      "title": "Cotización de las divisas que conforman la canasta del DEG y del ...",
+      "htmlTitle": "Cotización de las divisas que conforman la canasta del DEG y del ...",
+      "link": "https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?accion=consultarCuadro&idCuadro=CF307&sector=6&locale=es",
+      "displayLink": "www.banxico.org.mx",
+      "snippet": "... Peso mexicano - (CF307) ... basados en los tipos de cambio de mercado de las siguientes monedas: euro, yen japonés, libra esterlina, yuan chino y dólar de los ...",
+      "htmlSnippet": "... \u003cb\u003ePeso\u003c/b\u003e mexicano - (CF307) ... basados en los tipos de cambio de mercado de las siguientes monedas: euro, \u003cb\u003eyen\u003c/b\u003e japonés, libra esterlina, yuan chino y dólar de los&nbsp;...",
+      "formattedUrl": "https://www.banxico.org.mx/.../consultarDirectorioInternetAction.do?...",
+      "htmlFormattedUrl": "https://www.banxico.org.mx/.../consultarDirectorioInternetAction.do?...",
+      "pagemap": {
+        "metatags": [
+          {
+            "viewport": "width=device-width, initial-scale=1.0",
+            "format-detection": "telephone=no"
+          }
+        ]
+      }
+    }
+  ]
+}
