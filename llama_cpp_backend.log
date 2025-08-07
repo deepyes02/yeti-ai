@@ -30,3 +30,4 @@ ggml_metal_init: skipping kernel_cpy_f32_bf16                      (not supporte
 ggml_metal_init: skipping kernel_cpy_bf16_f32                      (not supported)
 ggml_metal_init: skipping kernel_cpy_bf16_bf16                     (not supported)
 llama_kv_cache_unified: LLAMA_SET_ROWS=0, using old ggml_cpy() method for backwards compatibility
+decode: removing KV cache entries for seq_id = 0, pos = [0, +inf)
