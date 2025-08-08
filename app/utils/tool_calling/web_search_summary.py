@@ -25,7 +25,7 @@ def make_search_tool(model):
             for r in ddgs.text(query, max_results=3):
                 if "href" in r:
                     results.append(r["href"])
-                if len(results) == 3:
+                if len(results) == 2:
                     break
 
         summaries = []

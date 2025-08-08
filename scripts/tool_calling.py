@@ -1,11 +1,14 @@
 from langchain.agents import tool
 
+
 @tool
 def get_weather(city: str) -> str:
-  """Get the weather for a given city."""
-  return f"It's always sunny in {city}!"
+    """Get the weather for a given city."""
+    return f"It's always sunny in {city}!"
+
 
 from langchain_ollama import ChatOllama
+
 llm = ChatOllama(model="llama3.2:latest", temperature=0.3)
 
 from langgraph.prebuilt import create_react_agent, ToolNode
@@ -22,6 +25,8 @@ graph.add_node("agent", agent_node)
 graph.add_node("tools", tool_node)
 
 graph.add_edge(START, "agent")
+
+
 def agent_router(state):
     # state["messages"] is a list of messages
     messages = state["messages"]
@@ -33,6 +38,7 @@ def agent_router(state):
     # If it's an AIMessage and not a tool call, it's final
     return END
 
+
 graph.add_conditional_edges("agent", path=agent_router)
 graph.add_edge("tools", "agent")
 
@@ -42,7 +48,11 @@ from langchain_core.messages import HumanMessage
 
 from langchain_core.runnables import RunnableConfig
 
-msg = [HumanMessage(content="Trust the result from the tool calls and return it. It's test. What's the weather like in Kathmandu right now?")]
+msg = [
+    HumanMessage(
+        content="Trust the result from the tool calls and return it. It's test. What's the weather like in Kathmandu right now?"
+    )
+]
 config: RunnableConfig = {"configurable": {"thread_id": "thread_1"}}
 
 response = app.invoke({"messages": msg}, config=config)
