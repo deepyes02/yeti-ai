@@ -3,6 +3,10 @@
 
 Using models with tool-calling capability, this ai framework is able to converse and run api functions without spilling personal data. 
 
+### Updates 15-August-2025
+1. Introduced llama_cpp for inference
+2. Moved Fast API to OS, (will restore it inside docker in next update - this was a temporary fix to integrate with llama_cpp inference)
+
 ### Updates 11-June-2025
 1. Integration with langGraph ecosystem for context awareness and tool calling.
 2. Web interface with an exposed chatbot for prompt input.
@@ -15,64 +19,55 @@ Using models with tool-calling capability, this ai framework is able to converse
 4. Voice controls & conversation (not urgent).
 5. Image analysis. (not so urgent)
 
-### Requirements
-1. Install Ollama - https://ollama.com/download  & download a model that's compatible (information available below)
-2. Install docker Desktop - https://www.docker.com/products/docker-desktop/ 
+### Environment
+Llama cpp and fastapi runs from the OS, while the database and frontend loads from docker. As stated in the update, I plan to move fastapi back inside docker in next update. So we will only have our model and inference running in the OS natively, while database, frontend and other management tools are containerized.
 
-```bash
-10:43:41 ~/Desktop/bin
-$ ollama pull mistral-nemo
-$ ollama pull llama3.2
-###############################
 
-## Among all these models, I found mistral-nemo and llama3.2 compatible and capable for tool calling. If memory is no problem, I'd go with mistral-nemo. For lightweight development, llama3.2 is faster.
-
-$ ollama ls
-NAME                   ID              SIZE      MODIFIED
-mistral-nemo:latest    994f3b8b7801    7.1 GB    40 hours ago
-qwen2.5vl:latest       5ced39dfa4ba    6.0 GB    6 days ago
-granite3.3:8b          fd429f23b909    4.9 GB    8 days ago
-qwen3:latest           500a1f067a9f    5.2 GB    2 weeks ago
-mistral:latest         f974a74358d6    4.1 GB    2 weeks ago
-gemma3:4b              a2af6cc3eb7f    3.3 GB    3 weeks ago
-mistral:7b             f974a74358d6    4.1 GB    2 months ago
-deepseek-r1:8b         28f8fd6cdc67    4.9 GB    4 months ago
-llama3.2:latest        a80c4f17acd5    2.0 GB    8 months ago
-starcoder2:3b          f67ae0f64584    1.7 GB    10 months ago
-```
-3. And make sure the model name is passed in [call_the_model.py](./app/call_the_model.py)
-```py
-models = ["mistral-nemo", "qwen3","mistral:7b","deepseek-r1:8b","llama3.2:latest","gemma3:4b"]
-model = ChatOllama(
-  base_url=os.getenv("OLLAMA_BASE_URL","http://host.docker.internal:11434"),
-  model=models[0], 
-  num_ctx=12000,
-  temperature=0.3,
-  top_p=0.7,
-  repeat_penalty=1.2
-)
-```
-
-### Clone this repository and install docker
-In the project root, run
-```bash
+### Clone the repo
+```sh
 git clone https://github.com/deepyes02/yeti-ai # clone this repo
-## First time
-docker compose up --build
-## Later
-docker compose up # or
-docker compose up -d #detached mode
-
-docker container ls
-$ docker container ls
-CONTAINER ID   IMAGE                           COMMAND                  CREATED         STATUS         PORTS                           NAMES
-2e6f3c2794d2   dpage/pgadmin4                  "/entrypoint.sh"         6 seconds ago   Up 5 seconds   443/tcp, 0.0.0.0:5050->80/tcp   ai-agent-pgadmin-1
-bd5261cc8934   ai-agent-frontend               "docker-entrypoint.s…"   6 seconds ago   Up 5 seconds   0.0.0.0:3000->3000/tcp          web
-928c748485bf   postgres:15                     "docker-entrypoint.s…"   6 seconds ago   Up 5 seconds   0.0.0.0:5432->5432/tcp          ai-agent-db-1
-8a20cd91f862   ai-agent-backend                "uvicorn app.main:ap…"   6 seconds ago   Up 5 seconds   0.0.0.0:8000->8000/tcp          api_backend
-1392623f254b   moby/buildkit:buildx-stable-1   "buildkitd"              13 hours ago    Up 13 hours                                    buildx_buildkit_loving_jemison0
-
 ```
+### Requirements
+1. Install llama_cpp (need to build for specific architecure, see documentation)
+2. Install docker Desktop - https://www.docker.com/products/docker-desktop/ 
+3. Download Mistral Nemo gguf format quantized model from huggingface.
+4. Serve the model from the OS via llama server
+   ```bash 
+   llama-server -m ~/llms/mistral-nemo-15.gguf --jinja -c 4096
+   #context length depends on how much GPU is available
+   ```
+5. Run uvicorn in the OS
+   ```bash
+   uvicorn app.main:app --host 0.0.0.0 --port 8000 
+   ```
+6. Run docker in the project root
+```bash
+docker compose up -d
+```
+7. And make sure the model name is passed in [load_model.py](./app/utils/load_model.py)
+
+### Note  
+To run scripts in [scripts](./scripts/) directory, to enable type checking, and simply testing, it is recommended to install an virutal environment in the project root and also pip install the requirements. Before we move fast api inside docker, this will be important to do. 
+
+```sh
+python -m venv env # create env, python 3.11 used in this code, so same is recommended
+source ./env/bin/active #activate env
+```
+
+
+```py
+def load_model():
+    model = ChatOpenAI(
+        base_url="http://localhost:8080/v1",
+        model="mistral-nemo",
+        api_key=SecretStr("your_api_key_here"),
+        temperature=0.9,
+        top_p=0.95,
+    )
+    return model
+```
+
+
 
 The backend server runs on port 8000 and frontend server runs on port 3000 (See docker-compose.yml)
 ### Visit `localhost:3000` in the browser
