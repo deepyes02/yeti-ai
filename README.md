@@ -1,107 +1,157 @@
-## Yeti - An agentic artifical intelligence framework 
-<img src="yeti-logo.png" alt="Yeti is a mythical mountain creature that several people have reported sightings, looks like human and more intelligent" height="180" width="200">
+# Yeti – An Agentic Artificial Intelligence Framework
 
+<img src="yeti-logo.png" alt="Yeti logo – a mythical intelligent mountain creature" height="180" width="200">
 
+Yeti is a framework for building **agentic AI applications** with support for open-source large language models, tool calling, and modular extensions.
 
-#### Bring you own model
-Using Mistral-Nemo, we are able to mimic compatibility with OPENAI API specification without paying any api key subscription. This enables use to not only work with open source models, but also in future train them, or update them, while seamlessly swapping powerful model into the framework. Imagine lora adapters but for open source models. I think this is useful since most AI services now are behind paywalls, and end user has no option to customize or own the intelligence.
+---
 
-Mistral-Nemo id good for the following reasons: 
-1. Capable to carry on meaningful conversation.
-2. Ability to call tools and functions for agentic ai application development.
-3. Open source and powerful
-4. Compatible with OpenAI API, ZERO SHOT, reAct based flow or Langgraph's tool calling framework.
-5. Ability to run quantized version in limited GPU environment.
+## Key Features
 
-### Tool calling
-1. Calling the weather for given city
-2. Getting current date and time
-3. Finding exchange rate (this is tied to private api so the url  isn't public and can't be used without permission)
+### Bring Your Own Model
+Yeti leverages **`Mistral-Nemo`**, providing compatibility with the `OpenAI API` specification without requiring an API subscription. This approach enables:
+
+- Seamless use of open-source models.  
+- Future capability to train, fine-tune, or update models.  
+- Flexible model swapping (similar to `LoRA` adapters but for open-source models).  
+- Greater control and ownership over intelligence, avoiding proprietary paywalls.
+
+**Why `Mistral-Nemo`?**
+1. Handles meaningful conversations effectively.
+2. Supports tool and function calling for agentic AI development.
+3. Fully open-source and powerful.
+4. Compatible with `OpenAI API`, zero-shot, `ReAct`-based flows, and `LangGraph`’s tool-calling framework.
+5. Can run quantized versions in limited GPU environments.
+
+---
+
+### Tool Calling
+Out-of-the-box support includes:
+1. Fetching weather for a given city.
+2. Getting the current date and time.
+3. Fetching exchange rates (via private API).
 4. Searching and summarizing results from the internet.
 
-### Updates 1-September-2025
-1. Moved Fast API back into docker, only running inference in the OS for simplicity. Test and minor update.
+---
 
-### Updates 15-August-2025
-1. Introduced llama_cpp for inference
-2. Moved Fast API to OS, (will restore it inside docker in next update - this was a temporary fix to integrate with llama_cpp inference)
+## Project Updates
 
-### Updates 11-June-2025
-1. Integration with langGraph ecosystem for context awareness and tool calling.
-2. Web interface with an exposed chatbot for prompt input.
-3. Postgresql database for storing conversation history.
+### 1 September 2025
+- Moved `FastAPI` back into `Docker`, keeping inference on the host OS for simplicity.
+- Minor tests and updates.
 
-### Still Under developments and extendable features (based on priority)
-1. Implementing text-embeddings and vector database to solve context-limit problem and intellectual response based on past conversation.
-2. Adding sessions and unique thread ids for classifying conversations based on topic.
-2. Adding a search backend for browsing internet for overcoming knowledge cut off.
-4. Voice controls & conversation (not urgent).
-5. Image analysis. (not so urgent)
+### 15 August 2025
+- Introduced `llama_cpp` for inference.  
+- Temporarily moved `FastAPI` to the host OS for integration with `llama_cpp`. (Restored in later update.)
 
-### Environment
-Llama cpp and fastapi runs from the OS, while the database and frontend loads from docker. As stated in the update, I plan to move fastapi back inside docker in next update. So we will only have our model and inference running in the OS natively, while database, frontend and other management tools are containerized.
+### 11 June 2025
+- Integrated with the `LangGraph` ecosystem for context awareness and tool calling.  
+- Added a web interface with a chatbot UI for prompts.  
+- Added `PostgreSQL` database for storing conversation history.
 
+---
 
-### Clone the repo
+## Roadmap (Planned Features)
+1. Text embeddings and vector database for overcoming context limits.  
+2. Session and thread IDs for topic-based conversation classification.  
+3. Integrated search backend for browsing the internet.  
+4. Voice controls and conversational interaction (low priority).  
+5. Image analysis (low priority).  
+
+---
+
+## Architecture
+
+- **Host OS**: Runs `llama_cpp` inference and `FastAPI` backend.  
+- **Docker**: Runs database, frontend, and other management tools.  
+- Future updates will consolidate `FastAPI` inside `Docker` for cleaner separation.
+
+---
+
+## Getting Started
+
+### Clone the Repository
 ```sh
-git clone https://github.com/deepyes02/yeti-ai # clone this repo
+git clone https://github.com/deepyes02/yeti-ai
 ```
+
 ### Requirements
-1. Install llama_cpp (need to build for specific architecure, see documentation)
-2. Install docker Desktop - https://www.docker.com/products/docker-desktop/ 
-3. Download Mistral Nemo gguf format quantized model from huggingface.
-4. Serve the model from the OS via llama server
-   ```bash 
-   llama-server -m ~/llms/mistral-nemo-15.gguf --jinja -c 4096
-   #context length depends on how much GPU is available
-   ```
-5. Run uvicorn in the OS, python api for backend and web socket
+1. Install `llama_cpp` (compile for your specific architecture; see documentation).  
+2. Install [`Docker Desktop`](https://www.docker.com/products/docker-desktop/).  
+3. Download the **`Mistral-Nemo`** quantized GGUF model from Hugging Face.  
+4. Serve the model locally:
    ```bash
-   uvicorn app.main:app --host 0.0.0.0 --port 8000 
+   llama-server -m ~/llms/mistral-nemo-15.gguf --jinja -c 4096
+   # Adjust context length based on available GPU
    ```
-6. Run docker in the project root
-```bash
-docker compose up -d
-```
-1. And make sure the model name is passed in [load_model.py](./app/utils/load_model.py)
+5. Run the backend (`FastAPI` + `WebSocket`):
+   ```bash
+   uvicorn app.main:app --host 0.0.0.0 --port 8000
+   ```
+6. Start `Docker` containers in the project root:
+   ```bash
+   docker compose up -d
+   ```
+7. Ensure the model name is correctly configured in [`load_model.py`](./app/utils/load_model.py).
 
-### Note  
-To run scripts in [scripts](./scripts/) directory, to enable type checking, and simply testing, it is recommended to install an virutal environment in the project root and also pip install the requirements. Before we move fast api inside docker, this will be important to do. 
+---
+
+## Development Notes
+
+For testing, type checking, and script execution in [`scripts/`](./scripts/), it is recommended to set up a virtual environment in the project root:
 
 ```sh
-python -m venv env # create env, python 3.11 used in this code, so same is recommended
-source ./env/bin/active #activate env
+python -m venv env   # Python 3.11 recommended
+source ./env/bin/activate
+pip install -r requirements.txt
 ```
 
+---
 
-### ChatOpenAI wrapper - no need for api key
-Mistral-Nemo is compatible with OPENAI api style, hence wrapping the model in Langgraph is similar to what one would do using open ai. The only difference is that there is no need for api key, just pass any string with `SecretStr(<string>)` as ChatOPENAI is originally written with intent to have api_key required.
+## ChatOpenAI Wrapper (No API Key Required)
 
-```py
+`Mistral-Nemo` is **`OpenAI API`-compatible**. Wrapping it in `LangGraph` works just like using `OpenAI`, except no real API key is required:
+
+```python
 def load_model():
     model = ChatOpenAI(
         base_url="http://localhost:8080/v1",
         model="mistral-nemo",
-        api_key=SecretStr("your_api_key_here"),  #any string is okay for api key, just needs to be there. 
+        api_key=SecretStr("any_string_here"),  # any placeholder string works
         temperature=0.9,
         top_p=0.95,
     )
     return model
 ```
 
+---
 
+## Running the Application
 
-The backend server runs on port 8000 and frontend server runs on port 3000 (See docker-compose.yml)
-### Visit `localhost:3000` in the browser
-<img src="image-1.png" alt="yeti ai chatbot ui" width="440" height="480">
+- **Backend server**: Port `8000`  
+- **Frontend server**: Port `3000` (see `docker-compose.yml`)  
 
-## Some other models I tested
-1. Deepseek - okay, but I wasn't able to run non-thinking model as it's quantized model is not available. 
-2. Qwen 3 - It comes with a switch to turn on/off the thinking mode. However this is not currently available via ollama. So it is a bit challenging. I have raised an issue on langgraph. 
-3. Llama3.2 : Can handle tools but isn't very coherent and keeps making mistake.
-4. granite3.3:8b : Promising AI from IBM but still wasn't able to call tools. Need to test this again.
+Visit: [http://localhost:3000](http://localhost:3000)  
 
-### Reference:
-ReAct: Synergizing Reasoning and Acting in Language Models - https://arxiv.org/abs/2210.03629
+<img src="image-1.png" alt="Yeti AI chatbot UI" width="440" height="480">
 
-find me on linkedin: https://linkedin.com/in/deepyes02 for collaboration or opportunities.
+---
+
+## Tested Models
+
+1. **`DeepSeek`** – Works, but limited by lack of quantized non-thinking model.  
+2. **`Qwen 3`** – Has a “thinking mode” toggle, but not yet supported via `Ollama`. (Issue raised with `LangGraph`.)  
+3. **`Llama 3.2`** – Handles tools but often produces incoherent results.  
+4. **`Granite 3.3 (8B)`** – Promising IBM model, but tool-calling not yet functional (needs more testing).  
+
+---
+
+## References
+
+- [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)
+
+---
+
+## Connect
+
+For collaborations or opportunities, connect with me on [LinkedIn](https://linkedin.com/in/deepyes02).
