@@ -19,6 +19,9 @@ Mistral-Nemo id good for the following reasons:
 3. Finding exchange rate (this is tied to private api so the url  isn't public and can't be used without permission)
 4. Searching and summarizing results from the internet.
 
+### Updates 1-September-2025
+1. Moved Fast API back into docker, only running inference in the OS for simplicity. Test and minor update.
+
 ### Updates 15-August-2025
 1. Introduced llama_cpp for inference
 2. Moved Fast API to OS, (will restore it inside docker in next update - this was a temporary fix to integrate with llama_cpp inference)
