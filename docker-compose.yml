@@ -39,6 +39,19 @@ services:
     volumes:
       - ./frontend:/app
     command: npm run dev
+  backend:
+    env_file:
+      - .env
+    build: .
+    container_name: 'backend'
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - ./app:/app/app
+    # command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
 volumes:
   database:
   pgadmin:

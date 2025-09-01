@@ -1,10 +1,12 @@
 ## Yeti - An agentic artifical intelligence framework 
 <img src="yeti-logo.png" alt="Yeti is a mythical mountain creature that several people have reported sightings, looks like human and more intelligent" height="180" width="200">
 
+
+
 #### Bring you own model
 Using Mistral-Nemo, we are able to mimic compatibility with OPENAI API specification without paying any api key subscription. This enables use to not only work with open source models, but also in future train them, or update them, while seamlessly swapping powerful model into the framework. Imagine lora adapters but for open source models. I think this is useful since most AI services now are behind paywalls, and end user has no option to customize or own the intelligence.
 
-My choice of model was Mistral-Nemo for the following reasons: 
+Mistral-Nemo id good for the following reasons: 
 1. Capable to carry on meaningful conversation.
 2. Ability to call tools and functions for agentic ai application development.
 3. Open source and powerful
@@ -12,7 +14,6 @@ My choice of model was Mistral-Nemo for the following reasons:
 5. Ability to run quantized version in limited GPU environment.
 
 ### Tool calling
-See [scripts/tool_calling.py](./scripts/tool_calling.py)  
 1. Calling the weather for given city
 2. Getting current date and time
 3. Finding exchange rate (this is tied to private api so the url  isn't public and can't be used without permission)
@@ -59,7 +60,7 @@ git clone https://github.com/deepyes02/yeti-ai # clone this repo
 ```bash
 docker compose up -d
 ```
-7. And make sure the model name is passed in [load_model.py](./app/utils/load_model.py)
+1. And make sure the model name is passed in [load_model.py](./app/utils/load_model.py)
 
 ### Note  
 To run scripts in [scripts](./scripts/) directory, to enable type checking, and simply testing, it is recommended to install an virutal environment in the project root and also pip install the requirements. Before we move fast api inside docker, this will be important to do. 
