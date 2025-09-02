@@ -40,13 +40,7 @@ def get_weather(city: str) -> dict:
                 condition_icon = data["current"].get("condition", {}).get("icon", "")
 
                 # Format response
-                weather_info = f"The weather in {location} is currently {temp_c}°C"
-                if condition:
-                    weather_info += f" with {condition.lower()}"
-                weather_info += (
-                    "Feel free to ask about humidity, UV index or wind speeds."
-                )
-                return {"summary": weather_info, "raw": data}
+                return data
 
             except json.JSONDecodeError:
                 return {

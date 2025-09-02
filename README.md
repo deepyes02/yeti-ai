@@ -32,25 +32,6 @@ Out-of-the-box support includes:
 3. Fetching exchange rates (via private API).
 4. Searching and summarizing results from the internet.
 
----
-
-## Project Updates
-
-### 1 September 2025
-- Moved `FastAPI` back into `Docker`, keeping inference on the host OS for simplicity.
-- Minor tests and updates.
-
-### 15 August 2025
-- Introduced `llama_cpp` for inference.  
-- Temporarily moved `FastAPI` to the host OS for integration with `llama_cpp`. (Restored in later update.)
-
-### 11 June 2025
-- Integrated with the `LangGraph` ecosystem for context awareness and tool calling.  
-- Added a web interface with a chatbot UI for prompts.  
-- Added `PostgreSQL` database for storing conversation history.
-
----
-
 ## Roadmap (Planned Features)
 1. Text embeddings and vector database for overcoming context limits.  
 2. Session and thread IDs for topic-based conversation classification.  
@@ -62,10 +43,8 @@ Out-of-the-box support includes:
 
 ## Architecture
 
-- **Host OS**: Runs `llama_cpp` inference and `FastAPI` backend.  
-- **Docker**: Runs database, frontend, and other management tools.  
-- Future updates will consolidate `FastAPI` inside `Docker` for cleaner separation.
-
+- **Host OS**: Runs `llama_cpp` inference 
+- **Docker**: Runs database, frontend and `FastAPI` backend.  
 ---
 
 ## Getting Started
