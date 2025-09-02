@@ -14,7 +14,7 @@ def fetch_and_clean(url):
         r = requests.get(url, timeout=5)
         return clean_html(r.text)
     except Exception as e:
-        return ""
+        return "Error fetching the internet"
 
 
 def make_search_tool(model):
@@ -36,6 +36,7 @@ def make_search_tool(model):
                 try:
                     logging.warning("Model invoked to summarize individual URL")
                     summary = model.invoke(prompt)
+                    logging.warning(summary)
                     summaries.append(
                         summary.content if hasattr(summary, "content") else summary
                     )
