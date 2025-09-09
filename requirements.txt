@@ -51,7 +51,6 @@ langgraph-checkpoint-postgres==2.0.21
 langgraph-prebuilt==0.2.3
 langgraph-sdk==0.1.70
 langsmith==0.4.2
-llama_cpp_python==0.3.14
 lxml==6.0.0
 MarkupSafe==3.0.2
 marshmallow==3.26.1
