@@ -44,7 +44,7 @@ langchain-community==0.3.27
 langchain-core==0.3.72
 langchain-ollama==0.3.3
 langchain-openai==0.3.28
-langchain-text-splitters==0.3.8
+langchain-text-splitters==1.0.0a1
 langgraph==0.4.10
 langgraph-checkpoint==2.1.0
 langgraph-checkpoint-postgres==2.0.21
