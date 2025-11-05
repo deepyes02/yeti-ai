@@ -40,7 +40,7 @@ langchain-ollama==0.3.3
 langchain-postgres==0.0.14
 langchain-text-splitters==0.3.8
 langgraph==0.4.8
-langgraph-checkpoint==2.0.26
+langgraph-checkpoint==3.0.0
 langgraph-checkpoint-postgres==2.0.21
 langgraph-checkpoint-sqlite==2.0.10
 langgraph-prebuilt==0.2.2
