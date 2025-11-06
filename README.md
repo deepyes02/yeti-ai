@@ -130,7 +130,3 @@ Visit: [http://localhost:3000](http://localhost:3000)
 - [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)
 
 ---
-
-## Connect
-
-For collaborations or opportunities, connect with me on [LinkedIn](https://linkedin.com/in/deepyes02).
