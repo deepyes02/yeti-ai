@@ -7,13 +7,6 @@ Yeti is a manifestation of pre-human intelligence and brute-force. Yeti is an AI
 Tested with: **`Mistral-Nemo`**
 ---
 
-## Key Features
-
-### Open source
-Yeti is compatible with the `OpenAI` specification. 
-- General chat bot.
-- Function calling and agentic applications.
-
 **Why `Mistral-Nemo`?**
 1. Mistral Nemo is the most capable open source model at the time of creating this project. Maybe some other models will be more compatible in the future.
 ---
@@ -52,13 +45,11 @@ Hey, what's the price of labulu?
 ---
 
 ## Architecture
-
-- **Host OS**: Runs `llama_cpp` inference 
-- **Docker**: Runs database, frontend and `FastAPI` backend.  
+- **Host OS**: Runs `llama_cpp` inference (download llama_cpp, an AI model and serve from your OS).
+- **Docker**: Runs database, frontend and `FastAPI` backend (docker bundle).
 ---
 
 ## Getting Started
-
 ### Clone the Repository
 ```sh
 git clone https://github.com/deepyes02/yeti-ai
