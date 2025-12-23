@@ -2,23 +2,21 @@
 
 <img src="assets/yeti-logo.png" alt="Yeti logo – a mythical intelligent mountain creature" height="150" width="150">
 
-Yeti is a manifestation of pre-human intelligence and brute-force. Yeti is an AI agent who speaks elegantly and performs tasks with ease. Yeti provides complete privacy of thoughts, and does not share any date with 3rd party applications. Yeti can be extended to add functions, api calls, etc to make him more powerful. 
+Yeti is a manifestation of pre-human intelligence and brute-force. Yeti is AI powered (mistral nemo), and speaks elegantly, while performing tasks with ease. Yeti can provide complete privacy of thoughts, and does not share any data with 3rd party applications. Yeti can be extended to add functions, api calls, and visuals to make him more influential. 
 
-Tested with: **`Mistral-Nemo`**
+**Works with `Mistral-Nemo`**   
+Mistral Nemo is the most capable open source model at the time of creating this project. Maybe some other models will be more compatible in the future.
 ---
 
-**Why `Mistral-Nemo`?**
-1. Mistral Nemo is the most capable open source model at the time of creating this project. Maybe some other models will be more compatible in the future.
----
+### Tool Calling  
+Extend tool-calling feature to increase or customize the application scope. E.g SASS. Currently the agent is able to:  
+1. Fetch weather for a given city.  
+2. Get the current date and time.  
+3. Fetching exchange rates (via private API, not available for public use).  
+4. Search and summarize results from the internet.  
 
-### Tool Calling
-Extend tool-calling feature to increase or customize the application scope. E.g SASS. Currently the agent is able to:
-1. Fetch weather for a given city.
-2. Get the current date and time.
-3. Fetching exchange rates (via private API, not available for public use).
-4. Search and summarize results from the internet.
 ```python
-from langchain.agents import tool
+from langchain.agents import tool  
 
 @tool
 def get_product_price(labubu: int) -> dict:
