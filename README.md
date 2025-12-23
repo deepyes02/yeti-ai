@@ -1,31 +1,47 @@
 # Yeti – An Agentic Artificial Intelligence Framework
 
-<img src="yeti-logo.png" alt="Yeti logo – a mythical intelligent mountain creature" height="180" width="200">
+<img src="assets/yeti-logo.png" alt="Yeti logo – a mythical intelligent mountain creature" height="150" width="150">
 
-Yeti is a framework for building **agentic AI applications** with support for open-source large language models, tool calling, and modular extensions.
+Yeti is a manifestation of pre-human intelligence and brute-force. Yeti is an AI agent who speaks elegantly and performs tasks with ease. Yeti provides complete privacy of thoughts, and does not share any date with 3rd party applications. Yeti can be extended to add functions, api calls, etc to make him more powerful. 
 
 Tested with: **`Mistral-Nemo`**
 ---
 
 ## Key Features
 
-### Open sourced
+### Open source
 Yeti is compatible with the `OpenAI` specification. 
-- Swap models that supports calling functions, or switch on the run.
-- Disconnect from internet and discuss private things, wipe memory when done. :-) 
+- General chat bot.
+- Function calling and agentic applications.
 
 **Why `Mistral-Nemo`?**
-1. best open source model out there (at the time of creating). Maybe currently OPEN AI's open sourced models will perform better.
-2. Supports tool and function calling for agentic AI development.
-
+1. Mistral Nemo is the most capable open source model at the time of creating this project. Maybe some other models will be more compatible in the future.
 ---
 
 ### Tool Calling
-Extend the tool-calling feature to increase or customize the application scope. E.g SASS. Currently the agent is able to:
+Extend tool-calling feature to increase or customize the application scope. E.g SASS. Currently the agent is able to:
 1. Fetch weather for a given city.
 2. Gett the current date and time.
 3. Fetching exchange rates (via private API, not available for public use).
 4. Search and summarize results from the internet.
+5. Write simple python functions. 
+```python
+from langchain.agents import tool
+
+@tool
+def get_product_price(labubu: int) -> dict:
+    """Get the price of a product."""
+    return get_product_price(labubu) 
+```
+```txt
+Prompt example: 
+Hey, what's the price of labulu? 
+### Process: 
+- calls the appropriate function get_product_price(labubu), captures the response and send it to the user automaticaly: 
+### Response:
+==> Ah yes, the price of labubu is 20$.
+```
+
 
 ## Roadmap (Planned Features)
 1. Text embeddings and vector database for overcoming context limits.  
@@ -105,9 +121,13 @@ def load_model():
 
 Visit: [http://localhost:3000](http://localhost:3000)  
 
-<img src="image-1.png" alt="Yeti AI chatbot UI" width="440" height="480">
+<img src="assets/image.png" alt="Yeti AI chatbot UI" width="800" height="800">
 
 ---
+
+## User Interface
+1. Built on React, the frontend utilizes websocket to consume and stream responses from the server.
+2. Build on Next JS, the web technology can be easily customized and extended.
 
 ## Tested Models
 1. **`DeepSeek`**

@@ -6,9 +6,9 @@ from app.utils.system_prompt import system_prompt
 from app.utils.load_model import load_model
 from dotenv import load_dotenv
 
-from app.utils.tool_calling.get_exchange_rates import get_exchange_rates
-from app.utils.tool_calling.get_weather import get_weather
-from app.utils.tool_calling.web_search_summary import make_search_tool
+# from app.utils.tool_calling.get_exchange_rates import get_exchange_rates
+# from app.utils.tool_calling.get_weather import get_weather
+# from app.utils.tool_calling.web_search_summary import make_search_tool
 from app.utils.tool_calling.current_datetime import get_current_datetime
 from langgraph.checkpoint.postgres import PostgresSaver
 from langchain_core.runnables import RunnableConfig
@@ -20,14 +20,14 @@ if not conn:
     raise ValueError("POSTGRESQL_URL environment variable is not set.")
 
 model = load_model()
-search_tool = make_search_tool(model)
+# search_tool = make_search_tool(model)
 
-tools = [get_weather, get_exchange_rates, search_tool, get_current_datetime]
+# tools = [get_weather, get_exchange_rates, search_tool, get_current_datetime]
 
 ## The agent_node is the "brain" that decides which tool to call.
-agent_node = create_react_agent(model, tools)
+agent_node = create_react_agent(model, [])
 ## The tool_node is the "hands" that executes the tool.
-tool_node = ToolNode(tools)
+# tool_node = ToolNode(tools)
 
 
 def agent_router(state):
@@ -41,11 +41,11 @@ def agent_router(state):
 ##nodes and edges
 workflow = StateGraph(state_schema=MessagesState)
 workflow.add_node("agent", agent_node)
-workflow.add_node("tools", tool_node)
+# workflow.add_node("tools", tool_node)
 
 workflow.add_edge(START, "agent")
-workflow.add_conditional_edges("agent", path=agent_router)
-workflow.add_edge("tools", "agent")
+# workflow.add_conditional_edges("agent", path=agent_router)
+# workflow.add_edge("tools", "agent")
 workflow.add_edge("agent", END)
 checkpointer_context_manager = PostgresSaver.from_conn_string(conn)
 checkpointer = checkpointer_context_manager.__enter__()
