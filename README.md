@@ -4,33 +4,28 @@
 
 Yeti is a framework for building **agentic AI applications** with support for open-source large language models, tool calling, and modular extensions.
 
+Tested with: **`Mistral-Nemo`**
 ---
 
 ## Key Features
 
-### Bring Your Own Model
-Yeti leverages **`Mistral-Nemo`**, providing compatibility with the `OpenAI API` specification without requiring an API subscription. This approach enables:
-
-- Seamless use of open-source models.  
-- Future capability to train, fine-tune, or update models.  
-- Flexible model swapping (similar to `LoRA` adapters but for open-source models).  
-- Greater control and ownership over intelligence, avoiding proprietary paywalls.
+### Open sourced
+Yeti is compatible with the `OpenAI` specification. 
+- Swap models that supports calling functions, or switch on the run.
+- Disconnect from internet and discuss private things, wipe memory when done. :-) 
 
 **Why `Mistral-Nemo`?**
-1. Handles meaningful conversations effectively.
+1. best open source model out there (at the time of creating). Maybe currently OPEN AI's open sourced models will perform better.
 2. Supports tool and function calling for agentic AI development.
-3. Fully open-source and powerful.
-4. Compatible with `OpenAI API`, zero-shot, `ReAct`-based flows, and `LangGraph`’s tool-calling framework.
-5. Can run quantized versions in limited GPU environments.
 
 ---
 
 ### Tool Calling
-Out-of-the-box support includes:
-1. Fetching weather for a given city.
-2. Getting the current date and time.
-3. Fetching exchange rates (via private API).
-4. Searching and summarizing results from the internet.
+Extend the tool-calling feature to increase or customize the application scope. E.g SASS. Currently the agent is able to:
+1. Fetch weather for a given city.
+2. Gett the current date and time.
+3. Fetching exchange rates (via private API, not available for public use).
+4. Search and summarize results from the internet.
 
 ## Roadmap (Planned Features)
 1. Text embeddings and vector database for overcoming context limits.  
@@ -55,29 +50,28 @@ git clone https://github.com/deepyes02/yeti-ai
 ```
 
 ### Requirements
-1. Install `llama_cpp` (compile for your specific architecture; see documentation).  
+1. Install `llama_cpp` (compile for your specific architecture; see llama_cpp documentation) on your Operating System. The llama server will run on OS, and communicate with Docker microservices via ports.  
 2. Install [`Docker Desktop`](https://www.docker.com/products/docker-desktop/).  
-3. Download the **`Mistral-Nemo`** quantized GGUF model from Hugging Face.  
-4. Serve the model locally:
+3. Download the **`Mistral-Nemo`** quantized GGUF model from Hugging Face. Also save locally.
+
+4. Serve the model on the OS.
    ```bash
    llama-server -m ~/llms/mistral-nemo-15.gguf --jinja -c 4096
    # Adjust context length based on available GPU
    ```
-5. Run the backend (`FastAPI` + `WebSocket`):
-   ```bash
-   uvicorn app.main:app --host 0.0.0.0 --port 8000
-   ```
-6. Start `Docker` containers in the project root:
+
+6. Start frontend, backend and microservices on the container
    ```bash
    docker compose up -d
    ```
+   Fires up Next JS frontend, FASTAPI backend and database service.
 7. Ensure the model name is correctly configured in [`load_model.py`](./app/utils/load_model.py).
 
 ---
 
 ## Development Notes
 
-For testing, type checking, and script execution in [`scripts/`](./scripts/), it is recommended to set up a virtual environment in the project root:
+For quick testing codes in [`scripts/`](./scripts/), etc, it is recommended to set up a virtual environment in the project root. Even though not necessary, since docker has it all configured - this is recommended for dev environment for testing out different things without restarting docker, etc.
 
 ```sh
 python -m venv env   # Python 3.11 recommended
@@ -87,16 +81,15 @@ pip install -r requirements.txt
 
 ---
 
-## ChatOpenAI Wrapper (No API Key Required)
-
-`Mistral-Nemo` is **`OpenAI API`-compatible**. Wrapping it in `LangGraph` works just like using `OpenAI`, except no real API key is required:
+## ChatOpenAI Wrapper
+`Mistral-Nemo` is **`OpenAI API`-compatible**. Wrapping it in `LangGraph` works just like using `OpenAI`, except no real API key is required. Just type the name of your dog.
 
 ```python
 def load_model():
     model = ChatOpenAI(
         base_url="http://localhost:8080/v1",
         model="mistral-nemo",
-        api_key=SecretStr("any_string_here"),  # any placeholder string works
+        api_key=SecretStr("punte"),  # any placeholder string works
         temperature=0.9,
         top_p=0.95,
     )
@@ -117,20 +110,10 @@ Visit: [http://localhost:3000](http://localhost:3000)
 ---
 
 ## Tested Models
-
-1. **`DeepSeek`** – Works, but limited by lack of quantized non-thinking model.  
-2. **`Qwen 3`** – Has a “thinking mode” toggle, but not yet supported via `Ollama`. (Issue raised with `LangGraph`.)  
-3. **`Llama 3.2`** – Handles tools but often produces incoherent results.  
-4. **`Granite 3.3 (8B)`** – Promising IBM model, but tool-calling not yet functional (needs more testing).  
-
----
+1. **`DeepSeek`**
+2. **`Qwen 3`**`LangGraph`  
+3. **`Llama 3.2`**
+4. **`Granite 3.3 (8B)`** 
 
 ## References
-
 - [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)
-
----
-
-## Connect
-
-For collaborations or opportunities, connect with me on [LinkedIn](https://linkedin.com/in/deepyes02).
