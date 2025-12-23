@@ -21,10 +21,9 @@ Yeti is compatible with the `OpenAI` specification.
 ### Tool Calling
 Extend tool-calling feature to increase or customize the application scope. E.g SASS. Currently the agent is able to:
 1. Fetch weather for a given city.
-2. Gett the current date and time.
+2. Get the current date and time.
 3. Fetching exchange rates (via private API, not available for public use).
 4. Search and summarize results from the internet.
-5. Write simple python functions. 
 ```python
 from langchain.agents import tool
 
