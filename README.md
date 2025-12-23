@@ -124,9 +124,8 @@ Visit: [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## User Interface
-1. Built on React, the frontend utilizes websocket to consume and stream responses from the server.
-2. Build on Next JS, the web technology can be easily customized and extended.
+## User Interface  
+Built on React and NEXT JS, the frontend utilizes websocket to consume and stream responses from the server. The app can hence be fully customized and extended.
 
 ## Tested Models
 1. **`DeepSeek`**
