@@ -7,6 +7,7 @@ import { RoleAndMessage, EditablePromptInputBarProps } from './types';
 function useChat() {
   const [messages, setMessages] = useState<RoleAndMessage[] | []>([]);
   const [input, setInput] = useState("");
+  const [status, setStatus] = useState("");
   const socket = useRef<WebSocket | null>(null);
   const aiMessageBuffer = useRef("");
   const chunk_ = useRef("");
@@ -15,23 +16,37 @@ function useChat() {
     socket.current = new WebSocket("ws://localhost:8000/ws");
 
     socket.current.onmessage = (event) => {
-      const text = event.data;
-      setMessages((prevMsgs) => {
-        const newMsgs = [...prevMsgs];
-        const lastIndex = newMsgs.length - 1;
-        aiMessageBuffer.current += text;
-        chunk_.current += text;
-        const { think, content } = splitThinkAndContent(chunk_.current);
-
-        if (newMsgs[lastIndex]?.role === "ai") {
-          newMsgs[lastIndex] = {
-            ...newMsgs[lastIndex],
-            content: content,
-            think: think,
-          };
+      try {
+        const payload = JSON.parse(event.data);
+        
+        if (payload.type === "signal") {
+          setStatus(payload.status);
+          return;
         }
-        return newMsgs;
-      });
+
+        if (payload.type === "chunk") {
+          setStatus(""); // Clear status when content starts
+          const text = payload.data;
+          setMessages((prevMsgs) => {
+            const newMsgs = [...prevMsgs];
+            const lastIndex = newMsgs.length - 1;
+            aiMessageBuffer.current += text;
+            chunk_.current += text;
+            const { think, content } = splitThinkAndContent(chunk_.current);
+
+            if (newMsgs[lastIndex]?.role === "ai") {
+              newMsgs[lastIndex] = {
+                ...newMsgs[lastIndex],
+                content: content,
+                think: think,
+              };
+            }
+            return newMsgs;
+          });
+        }
+      } catch (e) {
+        console.error("Error parsing websocket message", e);
+      }
     };
 
     return () => socket.current?.close();
@@ -40,12 +55,13 @@ function useChat() {
   const sendMessage = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!input.trim()) return;
-    const userMsg = { role: "user" as const, content: input, think: '' };
+    const userMsg = { role: "user" as const, content: input, think: "" };
     aiMessageBuffer.current = "";
-    setMessages((msgs) => [...msgs, userMsg, { role: "ai", content: "", think: '' }]);
+    setStatus("thinking"); // Initial status
+    setMessages((msgs) => [...msgs, userMsg, { role: "ai", content: "", think: "" }]);
     socket.current?.send(input);
     setInput("");
-    chunk_.current = '';
+    chunk_.current = "";
   };
 
   function splitThinkAndContent(text: string) {
@@ -59,15 +75,15 @@ function useChat() {
     }
   }
 
-  return { messages, input, setInput, sendMessage };
+  return { messages, input, setInput, sendMessage, status };
 }
 
 function EditablePromptInputBar({ input, setInput, onSendMessage }: EditablePromptInputBarProps) {
   const editableRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (editableRef.current && input === '') {
-      editableRef.current.innerHTML = '';
+    if (editableRef.current && input === "") {
+      editableRef.current.innerHTML = "";
     }
   }, [input]);
 
@@ -77,7 +93,7 @@ function EditablePromptInputBar({ input, setInput, onSendMessage }: EditableProm
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
       event.preventDefault();
       onSendMessage();
     }
@@ -86,7 +102,7 @@ function EditablePromptInputBar({ input, setInput, onSendMessage }: EditableProm
   return (
     <div
       ref={editableRef}
-      className={`${styles.editablePromptInputBar} ${!input ? styles.empty : ''}`}
+      className={`${styles.editablePromptInputBar} ${!input ? styles.empty : ""}`}
       contentEditable
       onInput={handleInput}
       onKeyDown={handleKeyDown}
@@ -96,17 +112,28 @@ function EditablePromptInputBar({ input, setInput, onSendMessage }: EditableProm
   );
 }
 
-function ChatWindow({ messages }: { messages: RoleAndMessage[] }) {
+function ChatWindow({ messages, status }: { messages: RoleAndMessage[]; status: string }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, status]);
+
+  const getStatusMessage = (status: string) => {
+    switch (status) {
+      case "searching":
+        return "Yeti is scouring the valleys...";
+      case "thinking":
+        return "Yeti is meditating on the glaciers...";
+      default:
+        return "Yeti is working...";
+    }
+  };
 
   return (
     <div className={styles.chatWindow}>
       {messages.map((msg, i) =>
-        msg.role === 'user' ? (
+        msg.role === "user" ? (
           <div key={i} className={styles.userMessage}>
             {msg.content}
           </div>
@@ -117,7 +144,17 @@ function ChatWindow({ messages }: { messages: RoleAndMessage[] }) {
                 <p>{msg.think}</p>
               </div>
             )}
-            {msg.content && <MarkdownRenderer content={msg.content} />}
+            {msg.content ? (
+              <MarkdownRenderer content={msg.content} />
+            ) : (
+              i === messages.length - 1 &&
+              status && (
+                <div className={styles.statusIndicator}>
+                  <span className={styles.spinner}></span>
+                  {getStatusMessage(status)}
+                </div>
+              )
+            )}
           </div>
         )
       )}
@@ -127,12 +164,12 @@ function ChatWindow({ messages }: { messages: RoleAndMessage[] }) {
 }
 
 export default function Home() {
-  const { messages, input, setInput, sendMessage } = useChat();
+  const { messages, input, setInput, sendMessage, status } = useChat();
 
   return (
     <div className={styles.chatPageWrapper}>
       <div className={styles.chatContainer}>
-        <ChatWindow messages={messages} />
+        <ChatWindow messages={messages} status={status} />
         <div className={styles.inputWrapper}>
           <EditablePromptInputBar
             input={input}

@@ -18,40 +18,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-import threading
-from queue import Queue
-
-
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
         try:
             prompt = await websocket.receive_text()
-        except WebSocketDisconnect:
-            break
-
-        q = Queue()
-
-        def produce():
+            logging.warning(f"User prompt: {prompt}")
+            
             try:
-                logging.warning(f"User prompt: {prompt}")
-                for chunk in stream_model_output_new(prompt):
-                    q.put(chunk)
+                # Natively await the async generator for minimum latency
+                async for obj in stream_model_output_new(prompt):
+                    import json
+                    await websocket.send_text(json.dumps(obj))
             except Exception as e:
                 logging.error(f"Error during model stream: {e}", exc_info=True)
-                error_message = f"Sorry, I encountered an error: {e}"
-                q.put(error_message)
-            finally:
-                q.put(None)  # Sentinel value
-
-        threading.Thread(target=produce, daemon=True).start()
-
-        while True:
-            chunk = await asyncio.get_event_loop().run_in_executor(None, q.get)
-            if chunk is None:
-                break
-            await websocket.send_text(chunk)
+                error_message = {"type": "chunk", "data": f"Sorry, I encountered an error: {e}"}
+                import json
+                await websocket.send_text(json.dumps(error_message))
+                
+        except WebSocketDisconnect:
+            break
+        except Exception as e:
+            logging.error(f"Unexpected error in websocket loop: {e}", exc_info=True)
+            break
 
 
 @app.websocket("/ws-decoy")
