@@ -48,11 +48,7 @@ Hey, what's the price of labulu?
 - **Docker**: Database, frontend and backend microservices in separate containers.
 ---
 
-## Getting Started
 ### Clone the Repository
-```sh
-git clone https://github.com/deepyes02/yeti-ai
-```
 
 ### Requirements
 1. Install [`llama_cpp`](https://github.com/ggml-org/llama.cpp)
@@ -75,6 +71,18 @@ From the root directory of the project, run:
 6. Ensure the model name is correctly configured in [`load_model.py`](./app/utils/load_model.py).
 
 ---
+---
+
+## Accessing the Application
+
+- **Backend server**: Port `8000`  
+- **Frontend server**: Port `3000` (see `docker-compose.yml`)  
+
+Visit: [http://localhost:3000](http://localhost:3000)  
+
+<img src="assets/image.png" alt="Yeti AI chatbot UI" width="800" height="800">
+
+---
 
 ## Development Notes
 
@@ -85,7 +93,6 @@ python -m venv env   # Python 3.11 recommended
 source ./env/bin/activate
 pip install -r requirements.txt
 ```
-
 ---
 
 ## ChatOpenAI Wrapper
@@ -103,19 +110,6 @@ def load_model():
     return model
 ```
 
----
-
-## Accessing the Application
-
-- **Backend server**: Port `8000`  
-- **Frontend server**: Port `3000` (see `docker-compose.yml`)  
-
-Visit: [http://localhost:3000](http://localhost:3000)  
-
-<img src="assets/image.png" alt="Yeti AI chatbot UI" width="800" height="800">
-
----
-
 ## User Interface  
 Built on React and NEXT JS, the frontend utilizes websocket to consume and stream responses from the server. The app can hence be fully customized and extended.
 
@@ -124,10 +118,11 @@ Built on React and NEXT JS, the frontend utilizes websocket to consume and strea
 I normally attach to the running docker containers to debug backend logs and errors while developing, it is helpful.
 
 ## Tested Models
+I tested these other models during the project, they work but Mistral Nemo was the best.
 1. **`DeepSeek`**
 2. **`Qwen 3`**`LangGraph`  
 3. **`Llama 3.2`**
 4. **`Granite 3.3 (8B)`** 
 
-## References
+## Reference
 - [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)
