@@ -1,16 +1,12 @@
-# Yeti – An Agentic Artificial Intelligence Framework
+# Yeti – Full-stack AI Agent
 
-Yeti - a mythical super-human being claimed to be sighted in the Himalayas.
-The Shipton Footprints (1951): Perhaps the most famous "evidence" ever found. British mountaineer Eric Shipton took photos of massive, humanoid tracks in the snow near Mount Everest. Each print was about 13 inches long and very wide. These photos sparked a "Yeti-mania" that lasted decades.
+The Shipton Footprints (1951): Perhaps the most famous "evidence" ever found. British mountaineer Eric Shipton took photos of massive, humanoid tracks in the snow near Mount Everest. Each print was about 13 inches long and very wide. These photos sparked a "Yeti-mania" that lasted decades. 
 
-Yeti is a manifestation of pre-human intelligence and brute-force. Yeti is AI powered, speaks elegantly, and performs tasks. 
-Yeti is private by design and can be extended to solve real world problems. 
-
-**Works with `Mistral-Nemo`**   
-Mistral Nemo is the most capable open source model at the time of creating this project. Maybe some other models will be more compatible in the future as long as they are OPENAI API compatible, and can invoke backend functions.
+**`Mistral-Nemo`** 
+Mistral Nemo was good at reasoning and calling functions with less confusion.
 ---
 
-### Tool Calling  
+### Tool Calling
 Currently the agent is able to:  
 1. Fetch weather for a given city.  
 2. Get the current date and time.  
