@@ -1,27 +1,29 @@
 # Yeti – An Agentic Artificial Intelligence Framework
 
-<img src="assets/yeti-logo.png" alt="Yeti logo – a mythical intelligent mountain creature" height="150" width="150">
+Yeti - a mythical super-human being claimed to be sighted in the Himalayas.
+The Shipton Footprints (1951): Perhaps the most famous "evidence" ever found. British mountaineer Eric Shipton took photos of massive, humanoid tracks in the snow near Mount Everest. Each print was about 13 inches long and very wide. These photos sparked a "Yeti-mania" that lasted decades.
 
-Yeti is a manifestation of pre-human intelligence and brute-force. Yeti is AI powered (mistral nemo), and speaks elegantly, while performing tasks with ease. Yeti can provide complete privacy of thoughts, and does not share any data with 3rd party applications. Yeti can be extended to add functions, api calls, and visuals to make him more influential. 
+Yeti is a manifestation of pre-human intelligence and brute-force. Yeti is AI powered, speaks elegantly, and performs tasks. 
+Yeti is private by design and can be extended to solve real world problems. 
 
 **Works with `Mistral-Nemo`**   
-Mistral Nemo is the most capable open source model at the time of creating this project. Maybe some other models will be more compatible in the future.
+Mistral Nemo is the most capable open source model at the time of creating this project. Maybe some other models will be more compatible in the future as long as they are OPENAI API compatible, and can invoke backend functions.
 ---
 
 ### Tool Calling  
-Extend tool-calling feature to increase or customize the application scope. E.g SASS. Currently the agent is able to:  
+Currently the agent is able to:  
 1. Fetch weather for a given city.  
 2. Get the current date and time.  
-3. Fetching exchange rates (via private API, not available for public use).  
+3. Fetching exchange rates
 4. Search and summarize results from the internet.  
 
 ```python
 from langchain.agents import tool  
 
 @tool
-def get_product_price(labubu: int) -> dict:
+def get_product_price(labubu: int) -> str:
     """Get the price of a product."""
-    return get_product_price(labubu) 
+    return get_price(labubu) 
 ```
 ```txt
 Prompt example: 
@@ -33,18 +35,17 @@ Hey, what's the price of labulu?
 ```
 
 
-## Roadmap (Planned Features)
+## Needs more work here:
 1. Text embeddings and vector database for overcoming context limits.  
-2. Session and thread IDs for topic-based conversation classification.  
-3. Integrated search backend for browsing the internet.  
-4. Voice controls and conversational interaction (low priority).  
+2. Managing session and thread IDs / user logins.  
+3. Better search libaray for browsing the internet.
+4. Voice controls (low priority).
 5. Image analysis (low priority).  
-
 ---
 
 ## Architecture
 - **Host OS**: Runs `llama_cpp` inference (download llama_cpp, an AI model and serve from your OS).
-- **Docker**: Runs database, frontend and `FastAPI` backend (docker bundle).
+- **Docker**: Database, frontend and backend microservices in separate containers.
 ---
 
 ## Getting Started
@@ -54,28 +55,30 @@ git clone https://github.com/deepyes02/yeti-ai
 ```
 
 ### Requirements
-1. Install `llama_cpp` (compile for your specific architecture; see llama_cpp documentation) on your Operating System. The llama server will run on OS, and communicate with Docker microservices via ports.  
-2. Install [`Docker Desktop`](https://www.docker.com/products/docker-desktop/).  
-3. Download the **`Mistral-Nemo`** quantized GGUF model from Hugging Face. Also save locally.
+1. Install [`llama_cpp`](https://github.com/ggml-org/llama.cpp)
+2. Install [`Docker Desktop`](https://www.docker.com/products/docker-desktop/). 
+3. Download the **`Mistral-Nemo`** quantized GGUF model from Hugging Face.
 
-4. Serve the model on the OS.
+4. Serve the model on your OS.
    ```bash
    llama-server -m ~/llms/mistral-nemo-15.gguf --jinja -c 4096
    # Adjust context length based on available GPU
    ```
 
-6. Start frontend, backend and microservices on the container
+5. Start frontend, backend and microservices on the container
+**Make sure the llama server is running before starting the containers**
+From the root directory of the project, run:
    ```bash
    docker compose up -d
    ```
    Fires up Next JS frontend, FASTAPI backend and database service.
-7. Ensure the model name is correctly configured in [`load_model.py`](./app/utils/load_model.py).
+6. Ensure the model name is correctly configured in [`load_model.py`](./app/utils/load_model.py).
 
 ---
 
 ## Development Notes
 
-For quick testing codes in [`scripts/`](./scripts/), etc, it is recommended to set up a virtual environment in the project root. Even though not necessary, since docker has it all configured - this is recommended for dev environment for testing out different things without restarting docker, etc.
+There are various notebooks and scripts for local testing in [`scripts/`](./scripts/), I set up a virtual environment in the project root and install the requirements.txt locally so it helps to execute those tests locally. It is not necessary to do this.
 
 ```sh
 python -m venv env   # Python 3.11 recommended
@@ -86,14 +89,14 @@ pip install -r requirements.txt
 ---
 
 ## ChatOpenAI Wrapper
-`Mistral-Nemo` is **`OpenAI API`-compatible**. Wrapping it in `LangGraph` works just like using `OpenAI`, except no real API key is required. Just type the name of your dog.
+Yeti uses **`OpenAI API`-compatible** models. So, wrapping it in `LangGraph` works just like using `OpenAI`, with random api_key
 
 ```python
 def load_model():
     model = ChatOpenAI(
         base_url="http://localhost:8080/v1",
         model="mistral-nemo",
-        api_key=SecretStr("punte"),  # any placeholder string works
+        api_key=SecretStr("just_some_string_maybe_the_name_of_your_ex_works_here"),  # no need for OPEN API key
         temperature=0.9,
         top_p=0.95,
     )
@@ -102,7 +105,7 @@ def load_model():
 
 ---
 
-## Running the Application
+## Accessing the Application
 
 - **Backend server**: Port `8000`  
 - **Frontend server**: Port `3000` (see `docker-compose.yml`)  
@@ -115,6 +118,10 @@ Visit: [http://localhost:3000](http://localhost:3000)
 
 ## User Interface  
 Built on React and NEXT JS, the frontend utilizes websocket to consume and stream responses from the server. The app can hence be fully customized and extended.
+
+## Attach and Debug
+
+I normally attach to the running docker containers to debug backend logs and errors while developing, it is helpful.
 
 ## Tested Models
 1. **`DeepSeek`**
