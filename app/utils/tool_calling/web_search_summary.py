@@ -17,47 +17,35 @@ def fetch_and_clean(url):
         return "Error fetching the internet"
 
 
-def make_search_tool(model):
+def make_search_tool():
     def _search_and_summarize(query: str) -> str:
-        logging.warning(f"Function search called")
+        logging.warning(f"Function search called for query: {query}")
         results = []
         with DDGS() as ddgs:
+            # Get top 3 results
             for r in ddgs.text(query, max_results=3):
                 if "href" in r:
-                    results.append(r["href"])
-                if len(results) == 2:
-                    break
+                    results.append({"url": r["href"], "title": r.get("title", "No Title")})
 
-        summaries = []
-        for url in results:
+        if not results:
+            return "No relevant search results found in the high valleys."
+
+        output_parts = []
+        for item in results:
+            url = item["url"]
+            title = item["title"]
+            logging.warning(f"Fetching content from: {url}")
             content = fetch_and_clean(url)
+            
             if content:
-                prompt = f"Summarize the following content relevant to the question: '{query}'\n\n{content[:2000]}"
-                try:
-                    logging.warning("Model invoked to summarize individual URL")
-                    summary = model.invoke(prompt)
-                    logging.warning(summary)
-                    summaries.append(
-                        summary.content if hasattr(summary, "content") else summary
-                    )
+                # Truncate content to keep context size manageable but informative
+                snippet = content[:1500].strip()
+                output_parts.append(f"Source: {title} ({url})\nContent: {snippet}\n---")
 
-                except Exception:
-                    logging.warning("Error during url search")
-                    continue
-
-        final_input = (
-            "Combine and summarize these points. Make sure you do not repeat what is already said:\n\n"
-            + "\n\n".join(summaries)
-        )
-        final_summary = model.invoke(final_input)
-        return (
-            final_summary.content
-            if hasattr(final_summary, "content")
-            else final_summary
-        )
+        return "\n\n".join(output_parts)
 
     return Tool.from_function(
-        name="search_and_summarize",
+        name="web_search",
         func=_search_and_summarize,
-        description="Search the web and summarize the results to answer a user question. Do not repeat yourself when summarizing.",
+        description="Search the high valleys of the internet for real-time information. Use this when the user's quest requires knowledge beyond your eternal memories.",
     )

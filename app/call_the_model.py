@@ -20,7 +20,7 @@ if not conn:
     raise ValueError("POSTGRESQL_URL environment variable is not set.")
 
 model = load_model()
-search_tool = make_search_tool(model)
+search_tool = make_search_tool()
 
 tools = [get_weather, get_exchange_rates, search_tool, get_current_datetime]
 
