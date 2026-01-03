@@ -17,43 +17,45 @@ def fetch_and_clean(url):
         return "Error fetching the internet"
 
 
-def make_search_tool():
-    def _search_and_summarize(query: str) -> str:
-        logger = logging.getLogger(__name__)
-        print("\n   " + "🔍" * 15)
-        logger.info(f"   🔎  SEARCHING WEB: '{query}'")
-        
-        results = []
-        with DDGS() as ddgs:
-            # Get top 3 results
-            for r in ddgs.text(query, max_results=3):
-                if "href" in r:
-                    results.append({"url": r["href"], "title": r.get("title", "No Title")})
+def search_web(query: str) -> str:
+    """Search the web for the given query and return a summary."""
+    logger = logging.getLogger(__name__)
+    print("\n   " + "🔍" * 15)
+    logger.info(f"   🔎  SEARCHING WEB: '{query}'")
+    
+    results = []
+    with DDGS() as ddgs:
+        # Get top 3 results
+        for r in ddgs.text(query, max_results=3):
+            if "href" in r:
+                results.append({"url": r["href"], "title": r.get("title", "No Title")})
 
-        if not results:
-            logger.warning("   ⚠️  NO RESULTS FOUND")
-            print("   " + "🔍" * 15 + "\n")
-            return "No relevant search results found in the high valleys."
-
-        logger.info(f"   ✅  FOUND {len(results)} RESULTS")
-        output_parts = []
-        for item in results:
-            url = item["url"]
-            title = item["title"]
-            logger.debug(f"   📄  READING: {title[:30]}...")
-            content = fetch_and_clean(url)
-            
-            if content:
-                # Truncate content to keep context size manageable but informative
-                snippet = content[:1500].strip()
-                output_parts.append(f"Source: {title} ({url})\nContent: {snippet}\n---")
-        
-        logger.info(f"   📚  SUMMARY COMPILED from {len(output_parts)} sources")
+    if not results:
+        logger.warning("   ⚠️  NO RESULTS FOUND")
         print("   " + "🔍" * 15 + "\n")
-        return "\n\n".join(output_parts)
+        return "No relevant search results found in the high valleys."
 
+    logger.info(f"   ✅  FOUND {len(results)} RESULTS")
+    output_parts = []
+    for item in results:
+        url = item["url"]
+        title = item["title"]
+        logger.debug(f"   📄  READING: {title[:30]}...")
+        content = fetch_and_clean(url)
+        
+        if content:
+            # Truncate content to keep context size manageable but informative
+            snippet = content[:1500].strip()
+            output_parts.append(f"Source: {title} ({url})\nContent: {snippet}\n---")
+    
+    logger.info(f"   📚  SUMMARY COMPILED from {len(output_parts)} sources")
+    print("   " + "🔍" * 15 + "\n")
+    return "\n\n".join(output_parts)
+
+
+def make_search_tool():
     return Tool.from_function(
         name="web_search",
-        func=_search_and_summarize,
+        func=search_web,
         description="Search the high valleys of the internet for real-time information. Use this when the user's quest requires knowledge beyond your eternal memories.",
     )

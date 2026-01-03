@@ -18,7 +18,7 @@ function useChat() {
     socket.current.onmessage = (event) => {
       try {
         const payload = JSON.parse(event.data);
-        
+
         if (payload.type === "signal") {
           setStatus(payload.status);
           return;
@@ -75,7 +75,11 @@ function useChat() {
     }
   }
 
-  return { messages, input, setInput, sendMessage, status };
+  const addMessage = (role: "user" | "ai", content: string, think: string = "") => {
+    setMessages((msgs) => [...msgs, { role, content, think }]);
+  };
+
+  return { messages, input, setInput, sendMessage, status, addMessage, setStatus };
 }
 
 function EditablePromptInputBar({ input, setInput, onSendMessage }: EditablePromptInputBarProps) {
@@ -164,13 +168,106 @@ function ChatWindow({ messages, status }: { messages: RoleAndMessage[]; status: 
 }
 
 export default function Home() {
-  const { messages, input, setInput, sendMessage, status } = useChat();
+  // Unpack hook manually since we added new returns
+  const chatHook = useChat();
+  const { messages, input, setInput, sendMessage, status } = chatHook;
+
+  const handleShortcut = async (type: string) => {
+    let endpoint = "";
+    let userText = "";
+
+    switch (type) {
+      case "rate":
+        endpoint = "/api/rate?from_curr=JPY&to_curr=INR";
+        userText = "Check JPY to INR Rate";
+        break;
+      case "weather":
+        endpoint = "/api/weather?city=Chiyoda, Tokyo";
+        userText = "Weather in Chiyoda, Tokyo";
+        break;
+      case "time":
+        endpoint = "/api/time";
+        userText = "Current Time";
+        break;
+      case "search":
+        endpoint = "/api/search?q=Digital Wallet Corporation";
+        userText = "Search 'Digital Wallet Corporation'";
+        break;
+      case "shipton":
+        endpoint = "/api/lore/shipton";
+        userText = "Tell me about your first encounter with a human";
+        break;
+    }
+
+    if (!endpoint) return;
+
+    // Add user message immediately
+    // @ts-ignore - addMessage is exposed now
+    const { addMessage, setStatus } = chatHook;
+    addMessage("user", userText);
+    setStatus("thinking"); // Using thinking status for lore as it fits better than searching
+
+    try {
+      const res = await fetch(`http://localhost:8000${endpoint}`);
+      const data = await res.json();
+
+      // Format the result nicely
+      let aiContent = "";
+      if (typeof data.result === 'string') {
+        aiContent = data.result;
+      } else if (data.result && typeof data.result === 'object') {
+        // Special handling for known tool outputs
+        if (data.result.current && data.result.location) {
+          // Weather Format
+          const { location, current } = data.result;
+          aiContent = `### 🌤️ Weather in ${location.name}\n\n` +
+            `**Temperature:** ${current.temp_c}°C\n` +
+            `**Condition:** ${current.condition.text}\n` +
+            `**Humidity:** ${current.humidity}%\n` +
+            `**Wind:** ${current.wind_kph} kph`;
+        } else if (data.result.summary) {
+          aiContent = data.result.summary;
+        } else {
+          // General JSON fallback - simplified
+          aiContent = "```json\n" + JSON.stringify(data.result, null, 2) + "\n```";
+        }
+      } else {
+        aiContent = JSON.stringify(data, null, 2);
+      }
+
+      addMessage("ai", aiContent);
+    } catch (error) {
+      console.error("Shortcut error:", error);
+      addMessage("ai", "Sorry, I couldn't remember that right now.");
+    } finally {
+      setStatus("");
+    }
+  };
 
   return (
     <div className={styles.chatPageWrapper}>
       <div className={styles.chatContainer}>
         <ChatWindow messages={messages} status={status} />
+
         <div className={styles.inputWrapper}>
+          <div className={styles.shortcutContainer}>
+            <button className={styles.shortcutButton} onClick={() => handleShortcut("rate")}>
+              💴 JPY to INR
+            </button>
+            <button className={styles.shortcutButton} onClick={() => handleShortcut("weather")}>
+              🌤️ Tokyo Weather
+            </button>
+            <button className={styles.shortcutButton} onClick={() => handleShortcut("time")}>
+              🕒 Time
+            </button>
+            <button className={styles.shortcutButton} onClick={() => handleShortcut("search")}>
+              🔍 Search DWC
+            </button>
+            <button className={styles.shortcutButton} onClick={() => handleShortcut("shipton")}>
+              👣 First Encounter
+            </button>
+          </div>
+
           <EditablePromptInputBar
             input={input}
             setInput={setInput}
