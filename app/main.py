@@ -12,6 +12,7 @@ import asyncio
 import threading
 import logging
 import json
+import re
 from datetime import datetime
 
 ### Enable Langsmith by uncommenting below options
@@ -131,12 +132,24 @@ async def websocket_endpoint(websocket: WebSocket):
                 
             elif "weather" in prompt_lower:
                 logger.info("⚡  FAST PATH TRIGGERED: WEATHER")
-                # Simple extraction: if they mention a city, great, else default to Tokyo
-                # This is a basic heuristic for the demo
+                
+                # Default
                 city = "Chiyoda, Tokyo"
-                if "london" in prompt_lower: city = "London"
-                elif "paris" in prompt_lower: city = "Paris"
-                elif "new york" in prompt_lower: city = "New York"
+                
+                # Regex extraction for "weather in [City]" or "weather for [City]"
+                match = re.search(r"weather (?:in|for) ([a-zA-Z\s]+)", prompt_lower) 
+                if match:
+                    city = match.group(1).strip()
+                else:
+                    # Regex extraction for "[City] weather"
+                    match_pre = re.search(r"([a-zA-Z\s]+) weather", prompt_lower)
+                    if match_pre:
+                         # Filter out common false positives
+                         candidate = match_pre.group(1).strip()
+                         if candidate not in ["current", "the", "check", "get", "show", "tell me"]:
+                             city = candidate
+
+                logger.info(f"📍  EXTRACTED CITY: {city}")
                 
                 data = get_weather.invoke({"city": city})
                 if isinstance(data, dict) and "location" in data:
@@ -145,10 +158,30 @@ async def websocket_endpoint(websocket: WebSocket):
                 else:
                     fast_response = str(data)
 
-            elif any(x in prompt_lower for x in ["rate", "exchange", "jpy", "inr"]):
+            elif any(x in prompt_lower for x in ["rate", "exchange", "convert", "jpy", "inr", "usd", "eur"]):
                 logger.info("⚡  FAST PATH TRIGGERED: EXCHANGE RATE")
+                
+                # Defaults
+                from_curr = "JPY"
+                to_curr = "INR"
+                
+                # Regex 1: "JPY to NPR", "convert USD to EUR", "rate for JPY to PHP"
+                # Looking for 3-letter codes
+                match = re.search(r"([a-zA-Z]{3})\s+(?:to|in|into)\s+([a-zA-Z]{3})", prompt_lower)
+                if match:
+                    from_curr = match.group(1).upper()
+                    to_curr = match.group(2).upper()
+                else:
+                    # Regex 2: Maybe just "JPY NPR" casually? Less likely to correspond to "rate", 
+                    # but if they typed "rate JPY NPR", let's catch it.
+                    match_lazy = re.search(r"rate\s+([a-zA-Z]{3})\s+([a-zA-Z]{3})", prompt_lower)
+                    if match_lazy:
+                         from_curr = match_lazy.group(1).upper()
+                         to_curr = match_lazy.group(2).upper()
+
+                logger.info(f"💱  EXTRACTED PAIR: {from_curr} -> {to_curr}")
                 # Hardcoded for demo specific query "JPY to INR" often used
-                result = get_exchange_rates.invoke({"from_currency": "JPY", "to_currency": "INR"})
+                result = get_exchange_rates.invoke({"from_currency": from_curr, "to_currency": to_curr})
                 if isinstance(result, dict) and "summary" in result:
                     fast_response = result["summary"]
                 else:
