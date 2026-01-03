@@ -24,11 +24,16 @@ def search_web(query: str) -> str:
     logger.info(f"   🔎  SEARCHING WEB: '{query}'")
     
     results = []
-    with DDGS() as ddgs:
-        # Get top 3 results
-        for r in ddgs.text(query, max_results=3):
-            if "href" in r:
-                results.append({"url": r["href"], "title": r.get("title", "No Title")})
+    results = []
+    try:
+        with DDGS() as ddgs:
+            # Get top 3 results
+            for r in ddgs.text(query, max_results=3):
+                if "href" in r:
+                    results.append({"url": r["href"], "title": r.get("title", "No Title")})
+    except Exception as e:
+        logger.error(f"   ❌  SEARCH FAILED: {e}")
+        return f"I could not search the web at this moment (Rate Limit or Error: {str(e)}). Please try again later."
 
     if not results:
         logger.warning("   ⚠️  NO RESULTS FOUND")

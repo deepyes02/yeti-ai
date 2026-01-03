@@ -79,13 +79,7 @@ async def get_search_route(request: Request, q: str = "Digital Wallet Corporatio
     result = search_web(q)
     return {"result": result}
 
-@app.get("/api/lore/shipton")
-async def get_shipton_lore(request: Request):
-    client_ip = request.client.host if request.client else "Unknown"
-    logger.info(f"👣 Lore request (Shipton) from IP: {client_ip}")
-    return {
-        "result": "It was 1951, near the Menlung Basin of Everest. I was wandering through the soft powder, my mind drifting with the clouds. I left wide, heavy tracks—careless, perhaps. I didn't know Eric Shipton was watching from a distance, capturing my footprints in a photograph that would puzzle your world for decades. To me, it was just a morning walk; to him, it was proof of the unknown."
-    }
+
 
 
 @app.on_event("startup")
@@ -122,150 +116,9 @@ async def websocket_endpoint(websocket: WebSocket):
             print("-" * 40 + "\n")
             
             # --- FAST PATH ROUTER ---
-            fast_response = None
-            prompt_lower = prompt.lower()
-            
-            if "time" in prompt_lower:
-                logger.info("⚡  FAST PATH TRIGGERED: TIME")
-                try:
-                    result = get_current_datetime.invoke({})
-                    fast_response = f"The current time is: **{result}**"
-                except Exception as e:
-                    logger.warning(f"⚠️  Time tool execution failed: {e} -> DEFERRING TO AGENT")
-                    fast_response = None
-                
-            elif "weather" in prompt_lower:
-                logger.info("⚡  FAST PATH TRIGGERED: WEATHER")
-                
-                # Default
-                city = "Chiyoda, Tokyo"
-                
-                # Regex extraction
-                match = re.search(r"weather (?:in|for) ([a-zA-Z\s]+)", prompt_lower) 
-                if match:
-                    city = match.group(1).strip()
-                else:
-                    match_pre = re.search(r"([a-zA-Z\s]+) weather", prompt_lower)
-                    if match_pre:
-                         candidate = match_pre.group(1).strip()
-                         if candidate not in ["current", "the", "check", "get", "show", "tell me"]:
-                             city = candidate
-
-                logger.info(f"📍  EXTRACTED CITY: {city}")
-                
-                try:
-                    data = get_weather.invoke({"city": city})
-                    
-                    # VALIDATION: Check for tool errors
-                    is_error = False
-                    if isinstance(data, dict) and data.get("error"):
-                        is_error = True
-                    elif isinstance(data, str) and "error" in data.lower():
-                        is_error = True
-                        
-                    if is_error:
-                         logger.info(f"⚠️  Weather tool returned error for '{city}' -> DEFERRING TO AGENT")
-                         fast_response = None
-                    else:
-                        if isinstance(data, dict) and "location" in data:
-                             curr = data['current']
-                             fast_response = f"### 🌤️ Weather in {data['location']['name']}\n\n**Temperature:** {curr['temp_c']}°C\n**Condition:** {curr['condition']['text']}\n**Humidity:** {curr['humidity']}%\n**Wind:** {curr['wind_kph']} kph"
-                        else:
-                            fast_response = str(data)
-                except Exception as e:
-                    logger.warning(f"⚠️  Weather tool execution failed: {e} -> DEFERRING TO AGENT")
-                    fast_response = None
-
-            elif any(x in prompt_lower for x in ["rate", "exchange", "convert", "jpy", "inr", "usd", "eur"]):
-                logger.info("⚡  FAST PATH TRIGGERED: EXCHANGE RATE")
-                
-                from_curr = None
-                to_curr = None
-                
-                # Regex 1
-                match = re.search(r"\b([A-Za-z]{3})\b\s+(?:to|in|into)\s+\b([A-Za-z]{3})\b", prompt_lower)
-                if match:
-                    from_curr = match.group(1).upper()
-                    to_curr = match.group(2).upper()
-                else:
-                    # Regex 2
-                    match_lazy = re.search(r"rate\s+\b([A-Za-z]{3})\b\s+\b([A-Za-z]{3})\b", prompt_lower)
-                    if match_lazy:
-                         from_curr = match_lazy.group(1).upper()
-                         to_curr = match_lazy.group(2).upper()
-
-                valid_fast_path = False
-                supported_pairs = [
-                    # JPY base
-                    ("JPY", "NPR"), ("JPY", "INR"), ("JPY", "USD"), ("JPY", "BDT"),
-                    ("JPY", "IDR"), ("JPY", "VND"), ("JPY", "PHP"),
-                    # CAD base
-                    ("CAD", "PHP"), ("CAD", "VND"),
-                    # SGD base
-                    ("SGD", "PHP"), ("SGD", "VND"),
-                    # USD base
-                    ("USD", "PHP"), ("USD", "VND")
-                ]
-
-                if from_curr and to_curr:
-                    if (from_curr, to_curr) in supported_pairs:
-                        valid_fast_path = True
-                    else:
-                        logger.info(f"⚠️  Pair {from_curr}-{to_curr} not in whitelist -> DEFERRING TO AGENT")
-                else:
-                    logger.info("⚠️  No clear currencies found -> DEFERRING TO AGENT")
-
-                if valid_fast_path:
-                    logger.info(f"💱  EXTRACTED PAIR: {from_curr} -> {to_curr}")
-                    try:
-                        result = get_exchange_rates.invoke({"from_currency": from_curr, "to_currency": to_curr})
-                        
-                        # Double check the result for error messages
-                        if isinstance(result, str) and "Sorry" in result:
-                             logger.info("⚠️  Tool logic error -> DEFERRING TO AGENT")
-                             fast_response = None
-                        elif isinstance(result, dict) and result.get("error"):
-                             logger.info("⚠️  Tool error response -> DEFERRING TO AGENT")
-                             fast_response = None
-                        else:
-                            if isinstance(result, dict) and "summary" in result:
-                                fast_response = result["summary"]
-                            else:
-                                fast_response = str(result)
-                    except Exception as e:
-                        logger.warning(f"⚠️  Exchange tool execution failed: {e} -> DEFERRING TO AGENT")
-                        fast_response = None
-                else:
-                    fast_response = None # Explicitly skip fast path logic
-
-            
-            elif "shipton" in prompt_lower or "first encounter" in prompt_lower:
-                logger.info("⚡  FAST PATH TRIGGERED: LORE")
-                fast_response = "It was 1951, near the Menlung Basin of Everest. I was wandering through the soft powder, my mind drifting with the clouds. I left wide, heavy tracks—careless, perhaps. I didn't know Eric Shipton was watching from a distance, capturing my footprints in a photograph that would puzzle your world for decades. To me, it was just a morning walk; to him, it was proof of the unknown."
-
-            elif "search" in prompt_lower and "digital wallet" in prompt_lower:
-                 logger.info("⚡  FAST PATH TRIGGERED: SEARCH DWC")
-                 try:
-                    result = search_web("Digital Wallet Corporation")
-                    if "error" in str(result).lower():
-                        logger.info("⚠️  Search tool returned error -> DEFERRING TO AGENT")
-                        fast_response = None
-                    else:
-                        fast_response = result
-                 except Exception as e:
-                    logger.warning(f"⚠️  Search tool execution failed: {e} -> DEFERRING TO AGENT")
-                    fast_response = None
 
 
-            if fast_response:
-                # Simulate a tiny bit of "thinking" time for UX, or just send it
-                # For "wow" factor, let's send it instantly but chunked to simulate stream
-                # Or just one big chunk. Let's do one big chunk for max speed.
-                
-                await websocket.send_text(json.dumps({"type": "chunk", "data": fast_response}))
-                logger.info(f"✅  FAST RESPONSE SENT | Client #{client_id}")
-                print("\n" + "." * 60 + "\n")
-                continue # Skip the slow agent loop
+
             
             # --- SLOW PATH (AGENT) ---
             try:
@@ -284,6 +137,9 @@ async def websocket_endpoint(websocket: WebSocket):
                     elif chunk_count % 10 == 0:
                         logger.debug(f"📦  STREAMING | {chunk_count} chunks sent...")
                 
+                # Signal completion
+                await websocket.send_text(json.dumps({"type": "signal", "status": "ready"}))
+                
                 elapsed_total = (datetime.now() - start_time).total_seconds()
                 logger.info(f"✅  RESPONSE COMPLETE | {chunk_count} chunks | Total: {elapsed_total:.2f}s")
                 print("\n" + "." * 60 + "\n")
@@ -292,6 +148,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 logger.error(f"❌  STREAM ERROR | Client #{client_id} | {e}", exc_info=True)
                 error_message = {"type": "chunk", "data": f"Sorry, I encountered an error: {e}"}
                 await websocket.send_text(json.dumps(error_message))
+                await websocket.send_text(json.dumps({"type": "signal", "status": "ready"}))
                 
         except WebSocketDisconnect:
             logger.info(f"🔌  DISCONNECTED | Client #{client_id} | Total Msgs: {message_count}")

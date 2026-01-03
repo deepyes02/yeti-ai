@@ -7,7 +7,8 @@ import { RoleAndMessage, EditablePromptInputBarProps } from './types';
 function useChat() {
   const [messages, setMessages] = useState<RoleAndMessage[] | []>([]);
   const [input, setInput] = useState("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState(""); // status text (thinking/searching)
+  const [isBusy, setIsBusy] = useState(false); // UI lock state
   const socket = useRef<WebSocket | null>(null);
   const aiMessageBuffer = useRef("");
   const chunk_ = useRef("");
@@ -20,12 +21,17 @@ function useChat() {
         const payload = JSON.parse(event.data);
 
         if (payload.type === "signal") {
-          setStatus(payload.status);
+          if (payload.status === "ready") {
+            setIsBusy(false);
+            setStatus("");
+          } else {
+            setStatus(payload.status);
+          }
           return;
         }
 
         if (payload.type === "chunk") {
-          setStatus(""); // Clear status when content starts
+          setStatus(""); // Clear status text when content starts
           const text = payload.data;
           setMessages((prevMsgs) => {
             const newMsgs = [...prevMsgs];
@@ -46,6 +52,7 @@ function useChat() {
         }
       } catch (e) {
         console.error("Error parsing websocket message", e);
+        setIsBusy(false);
       }
     };
 
@@ -55,9 +62,11 @@ function useChat() {
   const sendMessage = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!input.trim()) return;
+
+    setIsBusy(true); // Lock UI
     const userMsg = { role: "user" as const, content: input, think: "" };
     aiMessageBuffer.current = "";
-    setStatus("thinking"); // Initial status
+    setStatus("thinking");
     setMessages((msgs) => [...msgs, userMsg, { role: "ai", content: "", think: "" }]);
     socket.current?.send(input);
     setInput("");
@@ -79,10 +88,10 @@ function useChat() {
     setMessages((msgs) => [...msgs, { role, content, think }]);
   };
 
-  return { messages, input, setInput, sendMessage, status, addMessage, setStatus };
+  return { messages, input, setInput, sendMessage, status, addMessage, setStatus, isBusy, setIsBusy };
 }
 
-function EditablePromptInputBar({ input, setInput, onSendMessage }: EditablePromptInputBarProps) {
+function EditablePromptInputBar({ input, setInput, onSendMessage, disabled }: EditablePromptInputBarProps & { disabled?: boolean }) {
   const editableRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -97,7 +106,7 @@ function EditablePromptInputBar({ input, setInput, onSendMessage }: EditableProm
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+    if (!disabled && (event.metaKey || event.ctrlKey) && event.key === "Enter") {
       event.preventDefault();
       onSendMessage();
     }
@@ -106,12 +115,12 @@ function EditablePromptInputBar({ input, setInput, onSendMessage }: EditableProm
   return (
     <div
       ref={editableRef}
-      className={`${styles.editablePromptInputBar} ${!input ? styles.empty : ""}`}
-      contentEditable
+      className={`${styles.editablePromptInputBar} ${!input ? styles.empty : ""} ${disabled ? styles.disabled : ""}`}
+      contentEditable={!disabled}
       onInput={handleInput}
       onKeyDown={handleKeyDown}
       suppressContentEditableWarning={true}
-      data-placeholder="Type your message..."
+      data-placeholder={disabled ? "Please wait..." : "Type your message..."}
     />
   );
 }
@@ -155,7 +164,7 @@ function ChatWindow({ messages, status }: { messages: RoleAndMessage[]; status: 
               status && (
                 <div className={styles.statusIndicator}>
                   <span className={styles.spinner}></span>
-                  {getStatusMessage(status)}
+                  <span className={styles.statusText}>{getStatusMessage(status)}</span>
                 </div>
               )
             )}
@@ -168,11 +177,12 @@ function ChatWindow({ messages, status }: { messages: RoleAndMessage[]; status: 
 }
 
 export default function Home() {
-  // Unpack hook manually since we added new returns
   const chatHook = useChat();
-  const { messages, input, setInput, sendMessage, status } = chatHook;
+  const { messages, input, setInput, sendMessage, status, isBusy, setIsBusy, addMessage, setStatus } = chatHook;
 
   const handleShortcut = async (type: string) => {
+    if (isBusy) return; // double protection
+
     let endpoint = "";
     let userText = "";
 
@@ -194,31 +204,29 @@ export default function Home() {
         userText = "Search 'Digital Wallet Corporation'";
         break;
       case "shipton":
-        endpoint = "/api/lore/shipton";
-        userText = "Tell me about your first encounter with a human";
-        break;
+        // Special Case: Uses WebSocket (Agent)
+        const prompt = "Tell me about your first encounter with Shipton.";
+        setInput(prompt);
+        sendMessage(); // This will auto-set isBusy(true)
+        return;
     }
 
     if (!endpoint) return;
 
-    // Add user message immediately
-    // @ts-ignore - addMessage is exposed now
-    const { addMessage, setStatus } = chatHook;
+    // For HTTP endpoints, we must manually manage busy state
+    setIsBusy(true);
     addMessage("user", userText);
-    setStatus("thinking"); // Using thinking status for lore as it fits better than searching
+    setStatus("thinking");
 
     try {
       const res = await fetch(`http://localhost:8000${endpoint}`);
       const data = await res.json();
 
-      // Format the result nicely
       let aiContent = "";
       if (typeof data.result === 'string') {
         aiContent = data.result;
       } else if (data.result && typeof data.result === 'object') {
-        // Special handling for known tool outputs
         if (data.result.current && data.result.location) {
-          // Weather Format
           const { location, current } = data.result;
           aiContent = `### 🌤️ Weather in ${location.name}\n\n` +
             `**Temperature:** ${current.temp_c}°C\n` +
@@ -228,7 +236,6 @@ export default function Home() {
         } else if (data.result.summary) {
           aiContent = data.result.summary;
         } else {
-          // General JSON fallback - simplified
           aiContent = "```json\n" + JSON.stringify(data.result, null, 2) + "\n```";
         }
       } else {
@@ -241,6 +248,7 @@ export default function Home() {
       addMessage("ai", "Sorry, I couldn't remember that right now.");
     } finally {
       setStatus("");
+      setIsBusy(false); // HTTP call done, unlock UI
     }
   };
 
@@ -249,37 +257,41 @@ export default function Home() {
       <div className={styles.chatContainer}>
         <ChatWindow messages={messages} status={status} />
 
-        <div className={styles.inputWrapper}>
+        <div className={styles.inputArea}>
           <div className={styles.shortcutContainer}>
-            <button className={styles.shortcutButton} onClick={() => handleShortcut("rate")}>
+            <button disabled={isBusy} className={styles.shortcutButton} onClick={() => handleShortcut("rate")}>
               💴 JPY to INR
             </button>
-            <button className={styles.shortcutButton} onClick={() => handleShortcut("weather")}>
+            <button disabled={isBusy} className={styles.shortcutButton} onClick={() => handleShortcut("weather")}>
               🌤️ Tokyo Weather
             </button>
-            <button className={styles.shortcutButton} onClick={() => handleShortcut("time")}>
+            <button disabled={isBusy} className={styles.shortcutButton} onClick={() => handleShortcut("time")}>
               🕒 Time
             </button>
-            <button className={styles.shortcutButton} onClick={() => handleShortcut("search")}>
+            <button disabled={isBusy} className={styles.shortcutButton} onClick={() => handleShortcut("search")}>
               🔍 Search DWC
             </button>
-            <button className={styles.shortcutButton} onClick={() => handleShortcut("shipton")}>
+            <button disabled={isBusy} className={styles.shortcutButton} onClick={() => handleShortcut("shipton")}>
               👣 First Encounter
             </button>
           </div>
 
-          <EditablePromptInputBar
-            input={input}
-            setInput={setInput}
-            onSendMessage={sendMessage}
-          />
-          <button
-            className={styles.sendButton}
-            type="submit"
-            onClick={sendMessage}
-          >
-            Send
-          </button>
+          <div className={styles.inputRow}>
+            <EditablePromptInputBar
+              input={input}
+              setInput={setInput}
+              onSendMessage={sendMessage}
+              disabled={isBusy}
+            />
+            <button
+              className={styles.sendButton}
+              type="submit"
+              onClick={sendMessage}
+              disabled={isBusy}
+            >
+              Send
+            </button>
+          </div>
         </div>
         <div className={styles.disclaimer}>
           AI can make mistakes, so always verify the information it provides. Ask about weather, exchange rates, current date and time, and search the web for information. You can also ask it to think about a problem before answering.
