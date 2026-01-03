@@ -5,7 +5,9 @@ import logging
 
 @tool
 def get_exchange_rates(from_currency: str, to_currency: str):
-    """Get exchange rate for a given currency pair. Currently available source currency is USD to JPY and JPY to NPR, BDT, INR, PHP, IDR and VND."""
+    """Get the current exchange rate between two currencies. Use 3-letter currency codes (e.g. JPY, USD, INR). 
+    Supports converting from Country Name to Currency Code if needed (e.g. "Japan" -> "JPY").
+    Primary supported currencies: JPY, USD, INR, NPR, BDT, IDR, PHP, VND."""
     logger = logging.getLogger(__name__)
     logger.info(f"💱 Getting exchange rate: {from_currency} → {to_currency}")
 
