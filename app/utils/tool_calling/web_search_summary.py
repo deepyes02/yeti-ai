@@ -19,7 +19,10 @@ def fetch_and_clean(url):
 
 def make_search_tool():
     def _search_and_summarize(query: str) -> str:
-        logging.warning(f"Function search called for query: {query}")
+        logger = logging.getLogger(__name__)
+        print("\n   " + "🔍" * 15)
+        logger.info(f"   🔎  SEARCHING WEB: '{query}'")
+        
         results = []
         with DDGS() as ddgs:
             # Get top 3 results
@@ -28,20 +31,25 @@ def make_search_tool():
                     results.append({"url": r["href"], "title": r.get("title", "No Title")})
 
         if not results:
+            logger.warning("   ⚠️  NO RESULTS FOUND")
+            print("   " + "🔍" * 15 + "\n")
             return "No relevant search results found in the high valleys."
 
+        logger.info(f"   ✅  FOUND {len(results)} RESULTS")
         output_parts = []
         for item in results:
             url = item["url"]
             title = item["title"]
-            logging.warning(f"Fetching content from: {url}")
+            logger.debug(f"   📄  READING: {title[:30]}...")
             content = fetch_and_clean(url)
             
             if content:
                 # Truncate content to keep context size manageable but informative
                 snippet = content[:1500].strip()
                 output_parts.append(f"Source: {title} ({url})\nContent: {snippet}\n---")
-
+        
+        logger.info(f"   📚  SUMMARY COMPILED from {len(output_parts)} sources")
+        print("   " + "🔍" * 15 + "\n")
         return "\n\n".join(output_parts)
 
     return Tool.from_function(

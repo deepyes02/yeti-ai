@@ -41,14 +41,26 @@ async def stream_model_output_new(prompt: str, thread_id=1):
     """
     Yields structured dictionary objects for the frontend asynchronously.
     """
+    import time
+    start_time = time.time()
+    logging.warning(f"🚀 Starting request for prompt: '{prompt[:50]}...'")
+    
     config: RunnableConfig = {
         "configurable": {"thread_id": thread_id},
         "metadata": {"user_id": thread_id},
     }
     
     async with AsyncPostgresSaver.from_conn_string(conn) as checkpointer:
+        checkpoint_time = time.time()
+        # logging.warning(f"⏱️  Checkpointer created: {checkpoint_time - start_time:.2f}s")
+        
         await checkpointer.setup()
+        setup_time = time.time()
+        # logging.warning(f"⏱️  Checkpointer setup: {setup_time - checkpoint_time:.2f}s")
+        
         app = create_react_agent(model, tools, checkpointer=checkpointer)
+        agent_time = time.time()
+        # logging.warning(f"⏱️  Agent created: {agent_time - setup_time:.2f}s")
         
         prev_state = await app.aget_state(config=config)
         prev_state_message = (
@@ -65,25 +77,61 @@ async def stream_model_output_new(prompt: str, thread_id=1):
                 ]
             }
         else:
-            last_msg = prev_state_message[-1] if prev_state_message else None
-            if isinstance(last_msg, HumanMessage):
-                prev_state.values["messages"].append(AIMessageChunk(content="Okay."))
             prev_state.values["messages"].append(HumanMessage(content=prompt))
             state = prev_state.values
 
+        state_time = time.time()
+        
+        # Start of AI Processing Block
+        print("\n" + "#" * 50)
+        logging.warning(f"🧠  AI AGENT ACTIVATED | THREAD ID: {thread_id}")
+        logging.warning(f"⏱️  PREPARATION TIME: {state_time - start_time:.2f}s")
+        print("#" * 50)
+        
+        iteration_count = 0
+        agent_calls = 0
+        tool_calls = 0
+        
         # Use stream_mode=["messages", "updates"] to catch both content and graph transitions
         async for stream_type, chunk in app.astream(
             state,
             config=config,
             stream_mode=["messages", "updates"],
         ):
+            iteration_count += 1
+            
             if stream_type == "messages":
                 msg, metadata = chunk
                 if isinstance(msg, AIMessageChunk) and msg.content:
+                    if iteration_count == 1:
+                        first_chunk_time = time.time()
+                        logging.warning(f"⚡  FIRST CHUNK GENERATED: {first_chunk_time - start_time:.2f}s")
                     yield {"type": "chunk", "data": msg.content}
             
             elif stream_type == "updates":
                 if "agent" in chunk:
+                    agent_calls += 1
+                    print("\n" + "   " + "-" * 30)
+                    logging.warning(f"🤖  STEP {agent_calls}: AGENT THINKING...")
+                    print("   " + "-" * 30)
                     yield {"type": "signal", "status": "thinking"}
                 elif "tools" in chunk:
+                    tool_calls += 1
+                    tool_info = chunk.get("tools", {})
+                    # Clean up tool info for display
+                    tool_name = "Unknown Tool"
+                    if 'messages' in tool_info and tool_info['messages']:
+                        tool_name = tool_info['messages'][0].name
+                    
+                    print("\n" + "   " + "🔧" * 20)
+                    logging.warning(f"🛠️  EXECUTING TOOL: {tool_name}")
+                    logging.warning(f"📥  TOOL OUTPUT: {str(tool_info)[:100]}...")
+                    print("   " + "🔧" * 20 + "\n")
                     yield {"type": "signal", "status": "searching"}
+        
+        end_time = time.time()
+        total_time = end_time - start_time
+        print("\n" + "#" * 50)
+        logging.warning(f"🏁  PROCESS COMPLETE | Total Time: {total_time:.2f}s")
+        logging.warning(f"📊  STATS: Agent Steps: {agent_calls} | Tool Calls: {tool_calls}")
+        print("#" * 50 + "\n")

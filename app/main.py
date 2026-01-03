@@ -5,10 +5,21 @@ from app.call_the_model import stream_model_output_new
 import asyncio
 import threading
 import logging
+import json
+from datetime import datetime
 
 ### Enable Langsmith by uncommenting below options
 # from app.utils.load_environment import load_environment_variables
 # load_environment_variables()
+
+# Configure logging format
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -18,29 +29,71 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+async def startup_event():
+    logger.info("🚀 Yeti Backend starting up...")
+    logger.info("📡 WebSocket endpoint available at: ws://localhost:8000/ws")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    logger.info("🛑 Yeti Backend shutting down...")
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    client_id = id(websocket)
+    # Visual separator for new connection
+    print("\n" + "=" * 60)
+    logger.info(f"🔌  NEW CONNECTION REQUEST | Client #{client_id}")
+    print("=" * 60 + "\n")
+    
     await websocket.accept()
+    logger.info(f"✅  CONNECTED | Client #{client_id} | Channel OPEN")
+    
+    message_count = 0
+    
     while True:
         try:
             prompt = await websocket.receive_text()
-            logging.warning(f"User prompt: {prompt}")
+            message_count += 1
+            
+            # Message received decoration
+            print("\n" + "-" * 40)
+            logger.info(f"📨  MESSAGE #{message_count} RECEIVED | Client #{client_id}")
+            logger.info(f"📝  PROMPT:  '{prompt[:100]}'{'...' if len(prompt) > 100 else ''}")
+            print("-" * 40 + "\n")
             
             try:
+                chunk_count = 0
+                start_time = datetime.now()
+                
                 # Natively await the async generator for minimum latency
                 async for obj in stream_model_output_new(prompt):
-                    import json
+                    chunk_count += 1
                     await websocket.send_text(json.dumps(obj))
+                    
+                    # Log first chunk and every 10th chunk for progress tracking
+                    if chunk_count == 1:
+                        elapsed = (datetime.now() - start_time).total_seconds()
+                        logger.info(f"⚡  FIRST TOKEN | Time: {elapsed:.2f}s | Client #{client_id}")
+                    elif chunk_count % 10 == 0:
+                        logger.debug(f"📦  STREAMING | {chunk_count} chunks sent...")
+                
+                elapsed_total = (datetime.now() - start_time).total_seconds()
+                logger.info(f"✅  RESPONSE COMPLETE | {chunk_count} chunks | Total: {elapsed_total:.2f}s")
+                print("\n" + "." * 60 + "\n")
+                
             except Exception as e:
-                logging.error(f"Error during model stream: {e}", exc_info=True)
+                logger.error(f"❌  STREAM ERROR | Client #{client_id} | {e}", exc_info=True)
                 error_message = {"type": "chunk", "data": f"Sorry, I encountered an error: {e}"}
-                import json
                 await websocket.send_text(json.dumps(error_message))
                 
         except WebSocketDisconnect:
+            logger.info(f"🔌  DISCONNECTED | Client #{client_id} | Total Msgs: {message_count}")
+            print("=" * 60 + "\n")
             break
         except Exception as e:
-            logging.error(f"Unexpected error in websocket loop: {e}", exc_info=True)
+            logger.error(f"❌  WEBSOCKET ERROR | Client #{client_id} | {e}", exc_info=True)
+            print("=" * 60 + "\n")
             break
 
 
