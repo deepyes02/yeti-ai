@@ -115,10 +115,6 @@ async def websocket_endpoint(websocket: WebSocket):
             logger.info(f"📝  PROMPT:  '{prompt[:100]}'{'...' if len(prompt) > 100 else ''}")
             print("-" * 40 + "\n")
             
-            # --- FAST PATH ROUTER ---
-
-
-
             
             # --- SLOW PATH (AGENT) ---
             try:
