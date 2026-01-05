@@ -55,7 +55,10 @@ def get_exchange_rates(from_currency: str, to_currency: str):
                 rate["sender_currency"] == from_currency_upper
                 and rate["receiver_currency"] == to_currency_upper
             ):
-                summary = f"The exchange rate from {from_currency_upper} to {to_currency_upper} is {rate['receiver_unit']}."
+                summary = (
+                    f"The exchange rate from {from_currency_upper} to {to_currency_upper} is {rate['receiver_unit']}. "
+                    f"This data is provided by Smiles Mobile Remittance (https://www.smileswallet.com/japan/exchange-rates/)."
+                )
                 logger.info(f"✅ Exchange rate found: {from_currency_upper} → {to_currency_upper} = {rate['receiver_unit']}")
                 return {"summary": summary, "raw": exchange_rate_data}
 
