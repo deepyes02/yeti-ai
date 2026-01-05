@@ -49,7 +49,7 @@ Hey, what's the price of labulu?
 ### Requirements
 1. Install [`llama_cpp`](https://github.com/ggml-org/llama.cpp)
 2. Install [`Docker Desktop`](https://www.docker.com/products/docker-desktop/). 
-3. Download the **`Mistral-Nemo`** quantized GGUF model from Hugging Face.
+3. Download appropriate [`Mistral-Nemo`](https://huggingface.co/bartowski/Mistral-Nemo-Instruct-2407-GGUF) quantized GGUF model from Hugging Face. 
 
 4. Serve the model on your OS.
    ```bash
