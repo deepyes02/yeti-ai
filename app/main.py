@@ -57,7 +57,7 @@ async def get_time_route(request: Request):
     return {"result": get_current_datetime.invoke({})}
 
 @app.get("/api/weather")
-async def get_weather_route(request: Request, city: str = "Chiyoda, Tokyo"):
+async def get_weather_route(request: Request, city: str = "Tokyo"):
     client_ip = request.client.host if request.client else "Unknown"
     logger.info(f"🌤️ Weather request for {city} from IP: {client_ip}")
     # get_weather expects a string argument named 'city' but invoked as tool

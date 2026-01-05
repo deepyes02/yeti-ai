@@ -181,75 +181,40 @@ export default function Home() {
   const { messages, input, setInput, sendMessage, status, isBusy, setIsBusy, addMessage, setStatus } = chatHook;
 
   const handleShortcut = async (type: string) => {
-    if (isBusy) return; // double protection
+    if (isBusy) return;
 
-    let endpoint = "";
-    let userText = "";
+    let prompt = "";
 
     switch (type) {
       case "rate":
-        endpoint = "/api/rate?from_curr=JPY&to_curr=INR";
-        userText = "Check JPY to INR Rate";
+        prompt = "What is the current JPY to INR exchange rate?";
         break;
       case "weather":
-        endpoint = "/api/weather?city=Chiyoda, Tokyo";
-        userText = "Weather in Chiyoda, Tokyo";
+        prompt = "What is the current weather in Tokyo?";
         break;
       case "time":
-        endpoint = "/api/time";
-        userText = "Current Time";
+        prompt = "What is the current time?";
         break;
       case "search":
-        endpoint = "/api/search?q=Digital Wallet Corporation";
-        userText = "Search 'Digital Wallet Corporation'";
+        prompt = "Who is Digital Wallet Corporation?";
         break;
       case "shipton":
-        // Special Case: Uses WebSocket (Agent)
-        const prompt = "Tell me about your first encounter with Shipton.";
-        setInput(prompt);
-        sendMessage(); // This will auto-set isBusy(true)
-        return;
+        prompt = "Tell me about your first encounter with Shipton.";
+        break;
     }
 
-    if (!endpoint) return;
+    if (!prompt) return;
 
-    // For HTTP endpoints, we must manually manage busy state
-    setIsBusy(true);
-    addMessage("user", userText);
-    setStatus("thinking");
-
-    try {
-      const res = await fetch(`http://localhost:8000${endpoint}`);
-      const data = await res.json();
-
-      let aiContent = "";
-      if (typeof data.result === 'string') {
-        aiContent = data.result;
-      } else if (data.result && typeof data.result === 'object') {
-        if (data.result.current && data.result.location) {
-          const { location, current } = data.result;
-          aiContent = `### 🌤️ Weather in ${location.name}\n\n` +
-            `**Temperature:** ${current.temp_c}°C\n` +
-            `**Condition:** ${current.condition.text}\n` +
-            `**Humidity:** ${current.humidity}%\n` +
-            `**Wind:** ${current.wind_kph} kph`;
-        } else if (data.result.summary) {
-          aiContent = data.result.summary;
-        } else {
-          aiContent = "```json\n" + JSON.stringify(data.result, null, 2) + "\n```";
-        }
-      } else {
-        aiContent = JSON.stringify(data, null, 2);
-      }
-
-      addMessage("ai", aiContent);
-    } catch (error) {
-      console.error("Shortcut error:", error);
-      addMessage("ai", "Sorry, I couldn't remember that right now.");
-    } finally {
-      setStatus("");
-      setIsBusy(false); // HTTP call done, unlock UI
-    }
+    // Route through the agent (WebSocket)
+    setInput(prompt);
+    // Use a small timeout to ensure the state update (setInput) is processed 
+    // before sendMessage pulls the value from the 'input' state.
+    // However, since sendMessage uses the internal 'input', and this is functional,
+    // we should ideally pass the text to sendMessage directly if possible, 
+    // or just let it read the state in the next tick.
+    setTimeout(() => {
+      sendMessage();
+    }, 0);
   };
 
   return (
@@ -294,7 +259,7 @@ export default function Home() {
           </div>
         </div>
         <div className={styles.disclaimer}>
-          AI can make mistakes, so always verify the information it provides. Ask about weather, exchange rates, current date and time, and search the web for information. You can also ask it to think about a problem before answering.
+          AI can make mistakes, just like humans. Please do your own verification.
         </div>
       </div>
     </div>
