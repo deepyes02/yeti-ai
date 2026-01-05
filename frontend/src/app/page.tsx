@@ -196,7 +196,7 @@ export default function Home() {
         prompt = "What is the current time?";
         break;
       case "search":
-        prompt = "Who is Digital Wallet Corporation?";
+        prompt = "Look up Digital Wallet Corporation.";
         break;
       case "shipton":
         prompt = "Tell me about your first encounter with Shipton.";

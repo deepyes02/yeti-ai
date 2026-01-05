@@ -1,6 +1,5 @@
 from langchain_core.tools import Tool
-from duckduckgo_search import DDGS
-import requests, logging
+import requests, logging, os
 from bs4 import BeautifulSoup
 
 
@@ -18,22 +17,44 @@ def fetch_and_clean(url):
 
 
 def search_web(query: str) -> str:
-    """Search the web for the given query and return a summary."""
+    """Search the web for the given query using Tavily and return a summary."""
     logger = logging.getLogger(__name__)
-    print("\n   " + "🔍" * 15)
-    logger.info(f"   🔎  SEARCHING WEB: '{query}'")
+    raw_api_key = os.environ.get("TAVITY_SEARCH_API_KEY", "")
     
-    results = []
-    results = []
+    # Clean the API key (strip quotes and whitespace)
+    api_key = raw_api_key.strip().strip('"').strip("'")
+    
+    print("\n   " + "🔍" * 15)
+    logger.info(f"   🔎  SEARCHING TAVILY: '{query}'")
+    
+    if not api_key:
+        logger.error("   ❌  TAVITY_SEARCH_API_KEY NOT FOUND")
+        return "Search is currently unavailable due to missing API key."
+
     try:
-        with DDGS() as ddgs:
-            # Get top 3 results
-            for r in ddgs.text(query, max_results=3):
-                if "href" in r:
-                    results.append({"url": r["href"], "title": r.get("title", "No Title")})
+        # Tavily Search API endpoint
+        url = "https://api.tavily.com/search"
+        
+        # Standard Tavily headers
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "query": query,
+            "search_depth": "basic",
+            "max_results": 3
+        }
+        
+        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        results = data.get("results", [])
+        
     except Exception as e:
-        logger.error(f"   ❌  SEARCH FAILED: {e}")
-        return f"I could not search the web at this moment (Rate Limit or Error: {str(e)}). Please try again later."
+        logger.error(f"   ❌  TAVILY SEARCH FAILED: {e}")
+        return f"I could not search the web at this moment. Please try again later."
 
     if not results:
         logger.warning("   ⚠️  NO RESULTS FOUND")
@@ -42,14 +63,18 @@ def search_web(query: str) -> str:
 
     logger.info(f"   ✅  FOUND {len(results)} RESULTS")
     output_parts = []
+    
     for item in results:
-        url = item["url"]
-        title = item["title"]
-        logger.debug(f"   📄  READING: {title[:30]}...")
-        content = fetch_and_clean(url)
+        url = item.get("url")
+        title = item.get("title", "No Title")
+        content = item.get("content", "")
         
         if content:
-            # Truncate content to keep context size manageable but informative
+            # Use Tavily's content, fallback to fetching if very short
+            if len(content) < 200:
+                logger.debug(f"   📄  Snippet short, fetching: {title[:30]}...")
+                content = fetch_and_clean(url)
+            
             snippet = content[:1500].strip()
             output_parts.append(f"Source: {title} ({url})\nContent: {snippet}\n---")
     
