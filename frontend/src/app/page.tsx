@@ -214,7 +214,7 @@ export default function Home() {
         prompt = "What is the current time?";
         break;
       case "search":
-        prompt = "Look up Digital Wallet Corporation.";
+        prompt = "Look up Digital Wallet Corporation on the internet.";
         break;
       case "shipton":
         prompt = "Tell me about your first encounter with Shipton.";
