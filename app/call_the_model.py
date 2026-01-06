@@ -1,4 +1,4 @@
-from langchain_core.messages import HumanMessage, AIMessageChunk, SystemMessage
+from langchain_core.messages import HumanMessage, AIMessage, AIMessageChunk, SystemMessage
 from langgraph.graph import START, MessagesState, StateGraph, END
 from langgraph.prebuilt import create_react_agent, ToolNode
 import logging, os
@@ -135,3 +135,50 @@ async def stream_model_output_new(prompt: str, thread_id=1):
         logging.warning(f"🏁  PROCESS COMPLETE | Total Time: {total_time:.2f}s")
         logging.warning(f"📊  STATS: Agent Steps: {agent_calls} | Tool Calls: {tool_calls}")
         print("#" * 50 + "\n")
+
+
+async def get_chat_history(thread_id: int):
+    """
+    Fetch conversation history for a given thread_id from the database.
+    Returns messages in the format expected by the frontend.
+    """
+    config: RunnableConfig = {
+        "configurable": {"thread_id": thread_id},
+        "metadata": {"user_id": thread_id},
+    }
+
+    async with AsyncPostgresSaver.from_conn_string(conn) as checkpointer:
+        await checkpointer.setup()
+        app_instance = create_react_agent(model, tools, checkpointer=checkpointer)
+
+        state = await app_instance.aget_state(config=config)
+        messages = state.values.get("messages", []) if state and state.values else []
+
+        # Convert LangChain messages to frontend format
+        frontend_messages = []
+        for msg in messages:
+            if isinstance(msg, SystemMessage):
+                continue  # Skip system messages in the UI
+            elif isinstance(msg, HumanMessage):
+                frontend_messages.append({
+                    "role": "user",
+                    "content": msg.content,
+                    "think": ""
+                })
+            elif isinstance(msg, AIMessage):
+                # Extract think tags if present
+                content = msg.content
+                think = ""
+                if "<think>" in content and "</think>" in content:
+                    match = re.search(r"<think>([\s\S]*?)<\/think>", content)
+                    if match:
+                        think = match.group(1).strip()
+                        content = content[match.end():].strip()
+
+                frontend_messages.append({
+                    "role": "ai",
+                    "content": content,
+                    "think": think
+                })
+
+        return frontend_messages
