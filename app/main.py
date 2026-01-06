@@ -79,6 +79,81 @@ async def get_search_route(request: Request, q: str = "Digital Wallet Corporatio
     result = search_web(q)
     return {"result": result}
 
+@app.get("/api/history")
+async def get_history_route(request: Request, thread_id: int = 1):
+    """
+    Fetch conversation history for a given thread_id from the database.
+    Returns messages in the format expected by the frontend.
+    """
+    client_ip = request.client.host if request.client else "Unknown"
+    logger.info(f"📜 History request for thread {thread_id} from IP: {client_ip}")
+    
+    from app.call_the_model import load_model
+    from app.utils.tool_calling.get_exchange_rates import get_exchange_rates
+    from app.utils.tool_calling.get_weather import get_weather
+    from app.utils.tool_calling.web_search_summary import make_search_tool
+    from app.utils.tool_calling.current_datetime import get_current_datetime
+    from langgraph.prebuilt import create_react_agent
+    from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+    from langchain_core.runnables import RunnableConfig
+    from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+    import os
+    
+    conn = os.environ.get("POSTGRESQL_URL", "")
+    if not conn:
+        raise HTTPException(status_code=500, detail="Database connection not configured")
+    
+    model = load_model()
+    search_tool = make_search_tool()
+    tools = [get_weather, get_exchange_rates, search_tool, get_current_datetime]
+    
+    config: RunnableConfig = {
+        "configurable": {"thread_id": thread_id},
+        "metadata": {"user_id": thread_id},
+    }
+    
+    try:
+        async with AsyncPostgresSaver.from_conn_string(conn) as checkpointer:
+            await checkpointer.setup()
+            app_instance = create_react_agent(model, tools, checkpointer=checkpointer)
+            
+            state = await app_instance.aget_state(config=config)
+            messages = state.values.get("messages", []) if state and state.values else []
+            
+            # Convert LangChain messages to frontend format
+            frontend_messages = []
+            for msg in messages:
+                if isinstance(msg, SystemMessage):
+                    continue  # Skip system messages in the UI
+                elif isinstance(msg, HumanMessage):
+                    frontend_messages.append({
+                        "role": "user",
+                        "content": msg.content,
+                        "think": ""
+                    })
+                elif isinstance(msg, AIMessage):
+                    # Extract think tags if present
+                    content = msg.content
+                    think = ""
+                    if "<think>" in content and "</think>" in content:
+                        import re
+                        match = re.search(r'<think>([\s\S]*?)</think>', content)
+                        if match:
+                            think = match.group(1)
+                            content = content[match.end():]
+                    
+                    frontend_messages.append({
+                        "role": "ai",
+                        "content": content,
+                        "think": think
+                    })
+            
+            logger.info(f"✅ Returned {len(frontend_messages)} messages for thread {thread_id}")
+            return {"messages": frontend_messages}
+    
+    except Exception as e:
+        logger.error(f"❌ Error fetching history: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 
