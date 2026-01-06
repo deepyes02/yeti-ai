@@ -14,6 +14,24 @@ function useChat() {
   const chunk_ = useRef("");
 
   useEffect(() => {
+    // 1. Fetch history from backend on mount
+    const fetchHistory = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/history?thread_id=1");
+        if (!response.ok) throw new Error("Failed to fetch history");
+        const data = await response.json();
+        if (data.messages && data.messages.length > 0) {
+          console.log(`📜 Loaded ${data.messages.length} messages from history`);
+          setMessages(data.messages);
+        }
+      } catch (err) {
+        console.error("❌ Error loading history:", err);
+      }
+    };
+
+    fetchHistory();
+
+    // 2. Setup WebSocket
     socket.current = new WebSocket("ws://localhost:8000/ws");
 
     socket.current.onmessage = (event) => {

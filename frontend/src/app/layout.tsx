@@ -8,8 +8,8 @@ const nunitoSans = Nunito_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Agentic AI",
-  description: "Bringing our AI to life",
+  title: "Yeti | AI Agent",
+  description: "Superintelligence from the base of Mount Everest",
 };
 
 export default function RootLayout({
