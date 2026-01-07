@@ -6,7 +6,7 @@ from app.utils.system_prompt import system_prompt
 from app.utils.load_model import load_model
 from dotenv import load_dotenv
 
-from app.utils.tool_calling.get_exchange_rates import get_exchange_rates
+from app.utils.tool_calling.get_exchange_rates import get_exchange_rates        
 from app.utils.tool_calling.get_weather import get_weather
 from app.utils.tool_calling.web_search_summary import make_search_tool
 from app.utils.tool_calling.current_datetime import get_current_datetime
@@ -85,6 +85,7 @@ async def stream_model_output_new(prompt: str, thread_id=1):
         # Start of AI Processing Block
         print("\n" + "#" * 50)
         logging.warning(f"🧠  AI AGENT ACTIVATED | THREAD ID: {thread_id}")
+        yield {"type": "signal", "status": "thinking", "message": f"Agent activated in {state_time - start_time:.2f}. ⏳ 処理が遅いマシンを使っているので、少し待ってください。 :-)"}
         logging.warning(f"⏱️  PREPARATION TIME: {state_time - start_time:.2f}s")
         print("#" * 50)
         
@@ -114,26 +115,78 @@ async def stream_model_output_new(prompt: str, thread_id=1):
                     print("\n" + "   " + "-" * 30)
                     logging.warning(f"🤖  STEP {agent_calls}: AGENT THINKING...")
                     print("   " + "-" * 30)
-                    yield {"type": "signal", "status": "thinking"}
+                    yield {"type": "signal", "status": "thinking", "message": "Yeti「イエティ」は氷河の上で瞑想しています……"}
                 elif "tools" in chunk:
                     tool_calls += 1
                     tool_info = chunk.get("tools", {})
                     # Clean up tool info for display
                     tool_name = "Unknown Tool"
+                    content = ""
                     if 'messages' in tool_info and tool_info['messages']:
                         tool_name = tool_info['messages'][0].name
+                        content = tool_info['messages'][0].content
                     
                     print("\n" + "   " + "🔧" * 20)
                     logging.warning(f"🛠️  EXECUTING TOOL: {tool_name}")
                     logging.warning(f"📥  TOOL OUTPUT: {str(tool_info)[:100]}...")
                     print("   " + "🔧" * 20 + "\n")
-                    yield {"type": "signal", "status": "searching"}
+                    
+                    # Create a friendly search message based on the tool
+                    search_msg = f"Yeti「イエティ」は谷をくまなく探して {tool_name} を探しています"
+                    sources = []
+                    
+                    if "web_search" in tool_name.lower() or "search" in tool_name.lower():
+                        import re
+                        search_msg = "Yeti「イエティ」は答えを探してインターネットを閲覧しています。"
+                        # Extract URLs from the content
+                        urls = re.findall(r'https?://[^\s\)\n]+', content)
+                        # Deduplicate and limit to top 6 randomized
+                        unique_urls = []
+                        for u in urls:
+                            if u not in unique_urls:
+                                unique_urls.append(u)
+                        
+                        import random
+                        random.shuffle(unique_urls)
+                        
+                        if len(unique_urls) > 6:
+                            unique_urls = unique_urls[:6]
+                        
+                        for url in unique_urls:
+                            domain = url.split("//")[-1].split("/")[0]
+                            sources.append({
+                                "url": url,
+                                "domain": domain,
+                                "favicon": f"https://www.google.com/s2/favicons?domain={domain}&sz=64"
+                            })
+                    elif "weather" in tool_name.lower():
+                        search_msg = "Yeti「イエティ」は天気のためにAPIに接続しています。"
+                        sources.append({
+                            "url": "https://www.weatherapi.com/",
+                            "domain": "weatherapi.com",
+                            "favicon": "https://www.google.com/s2/favicons?domain=weatherapi.com&sz=64"
+                        })
+                    elif "exchange" in tool_name.lower() or "rate" in tool_name.lower():
+                        search_msg = "Yeti「イエティ」はスマイルズ・モバイル・レミットの為替レートに関するAPIリクエストを送信しています。"
+                        sources.append({
+                            "url": "https://www.smileswallet.com/japan/exchange-rates/",
+                            "domain": "smileswallet.com",
+                            "favicon": "https://www.google.com/s2/favicons?domain=smileswallet.com&sz=64"
+                        })
+                        
+                    yield {
+                        "type": "signal", 
+                        "status": "searching", 
+                        "message": search_msg, 
+                        "sources": sources
+                    }
         
         end_time = time.time()
         total_time = end_time - start_time
         print("\n" + "#" * 50)
         logging.warning(f"🏁  PROCESS COMPLETE | Total Time: {total_time:.2f}s")
         logging.warning(f"📊  STATS: Agent Steps: {agent_calls} | Tool Calls: {tool_calls}")
+        yield {"type": "signal", "status": "complete", "message": "Yeti「イエティ」は現在の作業を完了しました。"}
         print("#" * 50 + "\n")
 
 

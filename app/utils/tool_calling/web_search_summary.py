@@ -44,7 +44,7 @@ def search_web(query: str) -> str:
         payload = {
             "query": query,
             "search_depth": "basic",
-            "max_results": 3
+            "max_results": 5
         }
         
         response = requests.post(url, json=payload, headers=headers, timeout=10)

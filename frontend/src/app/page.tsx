@@ -41,9 +41,30 @@ function useChat() {
         if (payload.type === "signal") {
           if (payload.status === "ready") {
             setIsBusy(false);
-            setStatus("");
+            // Only clear the status if it's not a completion message
+            setStatus((prev) =>
+              prev.toLowerCase().includes("finish") || prev.toLowerCase().includes("complete")
+                ? prev
+                : ""
+            );
           } else {
-            setStatus(payload.status);
+            // Prefer the dynamic message from backend, fallback to status code
+            setStatus(payload.message || payload.status);
+
+            // If sources are provided, update the last AI message
+            if (payload.sources && payload.sources.length > 0) {
+              setMessages((prevMsgs) => {
+                const newMsgs = [...prevMsgs];
+                const lastIndex = newMsgs.length - 1;
+                if (newMsgs[lastIndex]?.role === "ai") {
+                  newMsgs[lastIndex] = {
+                    ...newMsgs[lastIndex],
+                    sources: payload.sources
+                  };
+                }
+                return newMsgs;
+              });
+            }
           }
           return;
         }
@@ -77,16 +98,17 @@ function useChat() {
     return () => socket.current?.close();
   }, []);
 
-  const sendMessage = async (e?: React.FormEvent) => {
+  const sendMessage = async (e?: React.FormEvent, manualMessage?: string) => {
     if (e) e.preventDefault();
-    if (!input.trim()) return;
+    const messageToSend = manualMessage !== undefined ? manualMessage : input;
+    if (!messageToSend.trim()) return;
 
     setIsBusy(true); // Lock UI
-    const userMsg = { role: "user" as const, content: input, think: "" };
+    const userMsg = { role: "user" as const, content: messageToSend, think: "" };
     aiMessageBuffer.current = "";
     setStatus("thinking");
-    setMessages((msgs) => [...msgs, userMsg, { role: "ai", content: "", think: "" }]);
-    socket.current?.send(input);
+    setMessages((msgs) => [...msgs, userMsg, { role: "ai", content: "", think: "", sources: [] }]);
+    socket.current?.send(messageToSend);
     setInput("");
     chunk_.current = "";
   };
@@ -151,14 +173,15 @@ function ChatWindow({ messages, status }: { messages: RoleAndMessage[]; status: 
   }, [messages, status]);
 
   const getStatusMessage = (status: string) => {
-    switch (status) {
-      case "searching":
-        return "Yeti is scouring the valleys...";
-      case "thinking":
-        return "Yeti is meditating on the glaciers...";
-      default:
-        return "Yeti is working...";
-    }
+    // These are fallback messages for internal status codes
+    const fallbacks: Record<string, string> = {
+      searching: "Yeti is scouring the valleys...",
+      thinking: "Yeti is meditating on the glaciers...",
+    };
+
+    // If the status matches a fallback key, use it. 
+    // Otherwise, assume 'status' is already the descriptive message from the backend.
+    return fallbacks[status] || status || "Yeti is working...";
   };
 
   return (
@@ -175,16 +198,32 @@ function ChatWindow({ messages, status }: { messages: RoleAndMessage[]; status: 
                 <p>{msg.think}</p>
               </div>
             )}
-            {msg.content ? (
-              <MarkdownRenderer content={msg.content} />
-            ) : (
-              i === messages.length - 1 &&
-              status && (
-                <div className={styles.statusIndicator}>
-                  <span className={styles.spinner}></span>
-                  <span className={styles.statusText}>{getStatusMessage(status)}</span>
+            {msg.content && <MarkdownRenderer content={msg.content} />}
+
+            {/* Show search sources if available */}
+            {msg.sources && msg.sources.length > 0 && (
+              <div className={styles.sourceContainer}>
+                <p className={styles.sourceHeader}>Sources found:</p>
+                <div className={styles.sourceList}>
+                  {msg.sources.map((source, idx) => (
+                    <a key={idx} href={source.url} target="_blank" rel="noopener noreferrer" className={styles.sourceItem}>
+                      <img src={source.favicon} alt="" className={styles.favicon} />
+                      <span className={styles.domain}>{source.domain}</span>
+                    </a>
+                  ))}
                 </div>
-              )
+              </div>
+            )}
+
+            {/* Show status if it's the latest message */}
+            {i === messages.length - 1 && status && (
+              <div className={styles.statusIndicator}>
+                {/* Hide spinner for completion messages */}
+                {!(status.toLowerCase().includes("finish") || status.toLowerCase().includes("complete")) && (
+                  <span className={styles.spinner}></span>
+                )}
+                <span className={styles.statusText}>{getStatusMessage(status)}</span>
+              </div>
             )}
           </div>
         )
@@ -225,14 +264,8 @@ export default function Home() {
 
     // Route through the agent (WebSocket)
     setInput(prompt);
-    // Use a small timeout to ensure the state update (setInput) is processed 
-    // before sendMessage pulls the value from the 'input' state.
-    // However, since sendMessage uses the internal 'input', and this is functional,
-    // we should ideally pass the text to sendMessage directly if possible, 
-    // or just let it read the state in the next tick.
-    setTimeout(() => {
-      sendMessage();
-    }, 0);
+    // Send directly to avoid state update race conditions
+    sendMessage(undefined, prompt);
   };
 
   return (
