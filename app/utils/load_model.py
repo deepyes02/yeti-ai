@@ -22,8 +22,8 @@ def load_model():
         base_url=inference_url,
         model="mistral-nemo",
         api_key=SecretStr("some-fake-strings"),
-        temperature=0.9,
-        top_p=0.95,
+        temperature=0.4, # Lower temperature (0.1-0.5) is better for Agentic reasoning & tool use
+        top_p=0.9,
     )
     
     logger.info("✅  MODEL LOADED & READY")

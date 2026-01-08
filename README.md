@@ -111,7 +111,7 @@ def load_model():
     model = ChatOpenAI(
         base_url="http://localhost:8080/v1",
         model="mistral-nemo",
-        api_key=SecretStr("just_some_string_maybe_the_name_of_your_ex_works_here"),  # no need for OPEN API key
+        api_key=SecretStr("free_api_key_string"),  # no need for OPEN API key
         temperature=0.9,
         top_p=0.95,
     )
