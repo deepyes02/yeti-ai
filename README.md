@@ -1,132 +1,124 @@
-# Yeti – An Agentic Artificial Intelligence Framework
+# Yeti – Full-stack AI Agent
 
-<img src="yeti-logo.png" alt="Yeti logo – a mythical intelligent mountain creature" height="180" width="200">
+The Shipton Footprints (1951): Perhaps the most famous "evidence" ever found. British mountaineer Eric Shipton took photos of massive, humanoid tracks in the snow near Mount Everest. Each print was about 13 inches long and very wide. These photos sparked a "Yeti-mania" that lasted decades. 
 
-Yeti is a framework for building **agentic AI applications** with support for open-source large language models, tool calling, and modular extensions.
-
----
-
-## Key Features
-
-### Bring Your Own Model
-Yeti leverages **`Mistral-Nemo`**, providing compatibility with the `OpenAI API` specification without requiring an API subscription. This approach enables:
-
-- Seamless use of open-source models.  
-- Future capability to train, fine-tune, or update models.  
-- Flexible model swapping (similar to `LoRA` adapters but for open-source models).  
-- Greater control and ownership over intelligence, avoiding proprietary paywalls.
-
-**Why `Mistral-Nemo`?**
-1. Handles meaningful conversations effectively.
-2. Supports tool and function calling for agentic AI development.
-3. Fully open-source and powerful.
-4. Compatible with `OpenAI API`, zero-shot, `ReAct`-based flows, and `LangGraph`’s tool-calling framework.
-5. Can run quantized versions in limited GPU environments.
-
+**`Mistral-Nemo`** 
+Mistral Nemo was good at reasoning and calling functions with less confusion.
 ---
 
 ### Tool Calling
-Out-of-the-box support includes:
-1. Fetching weather for a given city.
-2. Getting the current date and time.
-3. Fetching exchange rates (via private API).
-4. Searching and summarizing results from the internet.
+Currently the agent is able to:  
+1. Fetch weather for a given city.  
+2. Get the current date and time.  
+3. Fetching exchange rates
+4. Search and summarize results from the internet.  
 
-## Roadmap (Planned Features)
+```python
+from langchain.agents import tool  
+
+@tool
+def get_product_price(labubu: int) -> str:
+    """Get the price of a product."""
+    return get_price(labubu) 
+```
+```txt
+Prompt example: 
+Hey, what's the price of labulu? 
+### Process: 
+- calls the appropriate function get_product_price(labubu), captures the response and send it to the user automaticaly: 
+### Response:
+==> Ah yes, the price of labubu is 20$.
+```
+
+
+## Needs more work here:
 1. Text embeddings and vector database for overcoming context limits.  
-2. Session and thread IDs for topic-based conversation classification.  
-3. Integrated search backend for browsing the internet.  
-4. Voice controls and conversational interaction (low priority).  
+2. Managing session and thread IDs / user logins.  
+3. Better search libaray for browsing the internet.
+4. Voice controls (low priority).
 5. Image analysis (low priority).  
-
 ---
 
 ## Architecture
-
-- **Host OS**: Runs `llama_cpp` inference 
-- **Docker**: Runs database, frontend and `FastAPI` backend.  
+- **Host OS**: Runs `llama_cpp` inference (download llama_cpp, an AI model and serve from your OS).
+- **Docker**: Database, frontend and backend microservices in separate containers.
 ---
 
-## Getting Started
-
 ### Clone the Repository
-```sh
-git clone https://github.com/deepyes02/yeti-ai
-```
 
 ### Requirements
-1. Install `llama_cpp` (compile for your specific architecture; see documentation).  
-2. Install [`Docker Desktop`](https://www.docker.com/products/docker-desktop/).  
-3. Download the **`Mistral-Nemo`** quantized GGUF model from Hugging Face.  
-4. Serve the model locally:
+1. Install [`llama_cpp`](https://github.com/ggml-org/llama.cpp)
+2. Install [`Docker Desktop`](https://www.docker.com/products/docker-desktop/). 
+3. Download appropriate [`Mistral-Nemo`](https://huggingface.co/bartowski/Mistral-Nemo-Instruct-2407-GGUF) quantized GGUF model from Hugging Face. 
+
+4. Serve the model on your OS.
    ```bash
    llama-server -m ~/llms/mistral-nemo-15.gguf --jinja -c 4096
    # Adjust context length based on available GPU
    ```
-5. Run the backend (`FastAPI` + `WebSocket`):
-   ```bash
-   uvicorn app.main:app --host 0.0.0.0 --port 8000
-   ```
-6. Start `Docker` containers in the project root:
+
+5. Start frontend, backend and microservices on the container
+**Make sure the llama server is running before starting the containers**
+From the root directory of the project, run:
    ```bash
    docker compose up -d
    ```
-7. Ensure the model name is correctly configured in [`load_model.py`](./app/utils/load_model.py).
+   Fires up Next JS frontend, FASTAPI backend and database service.
+6. Ensure the model name is correctly configured in [`load_model.py`](./app/utils/load_model.py).
 
 ---
-
-## Development Notes
-
-For testing, type checking, and script execution in [`scripts/`](./scripts/), it is recommended to set up a virtual environment in the project root:
-
-```sh
-python -m venv env   # Python 3.11 recommended
-source ./env/bin/activate
-pip install -r requirements.txt
-```
-
 ---
 
-## ChatOpenAI Wrapper (No API Key Required)
-
-`Mistral-Nemo` is **`OpenAI API`-compatible**. Wrapping it in `LangGraph` works just like using `OpenAI`, except no real API key is required:
-
-```python
-def load_model():
-    model = ChatOpenAI(
-        base_url="http://localhost:8080/v1",
-        model="mistral-nemo",
-        api_key=SecretStr("any_string_here"),  # any placeholder string works
-        temperature=0.9,
-        top_p=0.95,
-    )
-    return model
-```
-
----
-
-## Running the Application
+## Accessing the Application
 
 - **Backend server**: Port `8000`  
 - **Frontend server**: Port `3000` (see `docker-compose.yml`)  
 
 Visit: [http://localhost:3000](http://localhost:3000)  
 
-<img src="image-1.png" alt="Yeti AI chatbot UI" width="440" height="480">
+<img src="assets/image.png" alt="Yeti AI chatbot UI" width="800" height="800">
 
 ---
+
+## Development Notes
+
+There are various notebooks and scripts for local testing in [`scripts/`](./scripts/), I set up a virtual environment in the project root and install the requirements.txt locally so it helps to execute those tests locally. It is not necessary to do this.
+
+```sh
+python -m venv env   # Python 3.11 recommended
+source ./env/bin/activate
+pip install -r requirements.txt
+```
+---
+
+## ChatOpenAI Wrapper
+Yeti uses **`OpenAI API`-compatible** models. So, wrapping it in `LangGraph` works just like using `OpenAI`, with random api_key
+
+```python
+def load_model():
+    model = ChatOpenAI(
+        base_url="http://localhost:8080/v1",
+        model="mistral-nemo",
+        api_key=SecretStr("just_some_string_maybe_the_name_of_your_ex_works_here"),  # no need for OPEN API key
+        temperature=0.9,
+        top_p=0.95,
+    )
+    return model
+```
+
+## User Interface  
+Built on React and NEXT JS, the frontend utilizes websocket to consume and stream responses from the server. The app can hence be fully customized and extended.
+
+## Attach and Debug
+
+I normally attach to the running docker containers to debug backend logs and errors while developing, it is helpful.
 
 ## Tested Models
+I tested these other models during the project, they work but Mistral Nemo was the best.
+1. **`DeepSeek`**
+2. **`Qwen 3`**`LangGraph`  
+3. **`Llama 3.2`**
+4. **`Granite 3.3 (8B)`** 
 
-1. **`DeepSeek`** – Works, but limited by lack of quantized non-thinking model.  
-2. **`Qwen 3`** – Has a “thinking mode” toggle, but not yet supported via `Ollama`. (Issue raised with `LangGraph`.)  
-3. **`Llama 3.2`** – Handles tools but often produces incoherent results.  
-4. **`Granite 3.3 (8B)`** – Promising IBM model, but tool-calling not yet functional (needs more testing).  
-
----
-
-## References
-
+## Reference
 - [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)
-
----

@@ -1,14 +1,32 @@
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, HTTPException
+from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
 
-from app.call_the_model import stream_model_output_new
+from app.call_the_model import stream_model_output_new, get_chat_history
+from app.utils.tool_calling.current_datetime import get_current_datetime
+from app.utils.tool_calling.get_weather import get_weather
+from app.utils.tool_calling.get_exchange_rates import get_exchange_rates
+from app.utils.tool_calling.web_search_summary import search_web
 import asyncio
 import threading
 import logging
+import json
+import re
+from datetime import datetime
 
 ### Enable Langsmith by uncommenting below options
 # from app.utils.load_environment import load_environment_variables
 # load_environment_variables()
+
+# Configure logging format
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -18,40 +36,140 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-import threading
-from queue import Queue
+# --- Middleware ---
+class IPMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        client_ip = request.client.host if request.client else "Unknown"
+        # Log IP for every request (or store in request state for later use)
+        # request.state.client_ip = client_ip 
+        # logger.info(f"🌍 Request from IP: {client_ip} | Path: {request.url.path}")
+        response = await call_next(request)
+        return response
 
+app.add_middleware(IPMiddleware)
+
+# --- Direct Tool Routes ---
+
+@app.get("/api/time")
+async def get_time_route(request: Request):
+    client_ip = request.client.host if request.client else "Unknown"
+    logger.info(f"🕒 Time request from IP: {client_ip}")
+    return {"result": get_current_datetime.invoke({})}
+
+@app.get("/api/weather")
+async def get_weather_route(request: Request, city: str = "Tokyo"):
+    client_ip = request.client.host if request.client else "Unknown"
+    logger.info(f"🌤️ Weather request for {city} from IP: {client_ip}")
+    # get_weather expects a string argument named 'city' but invoked as tool
+    result = get_weather.invoke({"city": city})
+    return {"result": result}
+
+@app.get("/api/rate")
+async def get_rate_route(request: Request, from_curr: str = "JPY", to_curr: str = "INR"):
+    client_ip = request.client.host if request.client else "Unknown"
+    logger.info(f"💱 Rate request {from_curr}->{to_curr} from IP: {client_ip}")
+    result = get_exchange_rates.invoke({"from_currency": from_curr, "to_currency": to_curr})
+    # Tool returns dict or string, let's ensure we pass it back cleanly
+    return {"result": result}
+
+@app.get("/api/search")
+async def get_search_route(request: Request, q: str = "Digital Wallet Corporation"):
+    client_ip = request.client.host if request.client else "Unknown"
+    logger.info(f"🔍 Search request for '{q}' from IP: {client_ip}")
+    result = search_web(q)
+    return {"result": result}
+
+@app.get("/api/history")
+async def get_history_route(request: Request, thread_id: int = 1):
+    """
+    Fetch conversation history for a given thread_id from the database.
+    Returns messages in the format expected by the frontend.
+    """
+    client_ip = request.client.host if request.client else "Unknown"
+    logger.info(f"📜 History request for thread {thread_id} from IP: {client_ip}")
+    
+    try:
+        frontend_messages = await get_chat_history(thread_id)
+        logger.info(f"✅ Returned {len(frontend_messages)} messages for thread {thread_id}")
+        return {"messages": frontend_messages}
+    except Exception as e:
+        logger.error(f"❌ Error fetching history: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
+@app.on_event("startup")
+async def startup_event():
+    logger.info("🚀 Yeti Backend starting up...")
+    logger.info("📡 WebSocket endpoint available at: ws://localhost:8000/ws")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    logger.info("🛑 Yeti Backend shutting down...")
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    client_id = id(websocket)
+    # Visual separator for new connection
+    print("\n" + "=" * 60)
+    logger.info(f"🔌  NEW CONNECTION REQUEST | Client #{client_id}")
+    print("=" * 60 + "\n")
+    
     await websocket.accept()
+    logger.info(f"✅  CONNECTED | Client #{client_id} | Channel OPEN")
+    
+    message_count = 0
+    
     while True:
         try:
             prompt = await websocket.receive_text()
-        except WebSocketDisconnect:
-            break
-
-        q = Queue()
-
-        def produce():
+            message_count += 1
+            
+            # Message received decoration
+            print("\n" + "-" * 40)
+            logger.info(f"📨  MESSAGE #{message_count} RECEIVED | Client #{client_id}")
+            logger.info(f"📝  PROMPT:  '{prompt[:100]}'{'...' if len(prompt) > 100 else ''}")
+            print("-" * 40 + "\n")
+            
+            
+            # --- SLOW PATH (AGENT) ---
             try:
-                logging.warning(f"User prompt: {prompt}")
-                for chunk in stream_model_output_new(prompt):
-                    q.put(chunk)
+                chunk_count = 0
+                start_time = datetime.now()
+                
+                # Natively await the async generator for minimum latency
+                async for obj in stream_model_output_new(prompt):
+                    chunk_count += 1
+                    await websocket.send_text(json.dumps(obj))
+                    
+                    # Log first chunk and every 10th chunk for progress tracking
+                    if chunk_count == 1:
+                        elapsed = (datetime.now() - start_time).total_seconds()
+                        logger.info(f"⚡  FIRST TOKEN | Time: {elapsed:.2f}s | Client #{client_id}")
+                    elif chunk_count % 10 == 0:
+                        logger.debug(f"📦  STREAMING | {chunk_count} chunks sent...")
+                
+                # Signal completion
+                await websocket.send_text(json.dumps({"type": "signal", "status": "ready"}))
+                
+                elapsed_total = (datetime.now() - start_time).total_seconds()
+                logger.info(f"✅  RESPONSE COMPLETE | {chunk_count} chunks | Total: {elapsed_total:.2f}s")
+                print("\n" + "." * 60 + "\n")
+                
             except Exception as e:
-                logging.error(f"Error during model stream: {e}", exc_info=True)
-                error_message = f"Sorry, I encountered an error: {e}"
-                q.put(error_message)
-            finally:
-                q.put(None)  # Sentinel value
-
-        threading.Thread(target=produce, daemon=True).start()
-
-        while True:
-            chunk = await asyncio.get_event_loop().run_in_executor(None, q.get)
-            if chunk is None:
-                break
-            await websocket.send_text(chunk)
+                logger.error(f"❌  STREAM ERROR | Client #{client_id} | {e}", exc_info=True)
+                error_message = {"type": "chunk", "data": f"Sorry, I encountered an error: {e}"}
+                await websocket.send_text(json.dumps(error_message))
+                await websocket.send_text(json.dumps({"type": "signal", "status": "ready"}))
+                
+        except WebSocketDisconnect:
+            logger.info(f"🔌  DISCONNECTED | Client #{client_id} | Total Msgs: {message_count}")
+            print("=" * 60 + "\n")
+            break
+        except Exception as e:
+            logger.error(f"❌  WEBSOCKET ERROR | Client #{client_id} | {e}", exc_info=True)
+            print("=" * 60 + "\n")
+            break
 
 
 @app.websocket("/ws-decoy")
