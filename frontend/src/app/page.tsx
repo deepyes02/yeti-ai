@@ -258,6 +258,9 @@ export default function Home() {
       case "shipton":
         prompt = "Tell me about your first encounter with Shipton.";
         break;
+      case "introduction":
+        prompt = "I am preparing your for a demo to my company's executives. So When I ask you to introduce yourself, please provide an introduction, and greet the following people: Mr. Eiji Miyakawa (CEO), Mr. Takeru Kaneko(CTO), and Mr. Kawachi Tsutomu (R&D Head). Let them know you are working hard to impress them with our capabilites. Also apologize for the delay in response due to current hardware limitations. Respond in Markdown format, highlight names of executives and the company name. List the tools you have at your disposal. And explain the capabilities of each tool in bullets. Explain your design philosophy and how you plan to use the tools. In the last paragraph, share your personal story of how you moved from Everest to Fuji, and your experiences.";
+        break;
     }
 
     if (!prompt) return;
@@ -275,6 +278,9 @@ export default function Home() {
 
         <div className={styles.inputArea}>
           <div className={styles.shortcutContainer}>
+            <button disabled={isBusy} className={styles.shortcutButton} onClick={() => handleShortcut("introduction")}>
+              👣 Introduction
+            </button>
             <button disabled={isBusy} className={styles.shortcutButton} onClick={() => handleShortcut("rate")}>
               💴 JPY to INR
             </button>
