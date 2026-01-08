@@ -4,7 +4,7 @@ mkdir -p slots
 
 llama-server -m /Users/deepesh/Desktop/bin/llms/mistral-nemo-15.gguf \
   --jinja \
-  -c 16000 \
+  -c 32000 \
   -ngl 99 \
   -fa \
   -cb \

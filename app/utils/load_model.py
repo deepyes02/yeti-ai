@@ -24,6 +24,10 @@ def load_model():
         api_key=SecretStr("some-fake-strings"),
         temperature=0.4, # Lower temperature (0.1-0.5) is better for Agentic reasoning & tool use
         top_p=0.9,
+        model_kwargs={
+            "frequency_penalty": 0.1,  # Reduces repetitive phrases
+            "max_tokens": 2048,        # Safety limit for response length
+        }
     )
     
     logger.info("✅  MODEL LOADED & READY")
