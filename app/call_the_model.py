@@ -28,13 +28,18 @@ tools = [get_weather, get_exchange_rates, search_tool, get_current_datetime]
 # Global references
 yeti_agent = None
 checkpointer = None
+_checkpointer_cm = None  # Hold reference to context manager
 
 async def initialize_yeti():
-    global yeti_agent, checkpointer
+    global yeti_agent, checkpointer, _checkpointer_cm
     if not conn:
         raise ValueError("POSTGRESQL_URL environment variable is not set.")
-        
-    checkpointer = AsyncPostgresSaver.from_conn_string(conn)
+    
+    # from_conn_string returns an async context manager. 
+    # We must enter it to get the actual saver instance.
+    _checkpointer_cm = AsyncPostgresSaver.from_conn_string(conn)
+    checkpointer = await _checkpointer_cm.__aenter__()
+    
     await checkpointer.setup()
     
     yeti_agent = create_react_agent(model, tools, checkpointer=checkpointer)

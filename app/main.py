@@ -3,7 +3,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 
-from app.call_the_model import stream_model_output_new, get_chat_history
+from app.call_the_model import stream_model_output_new, get_chat_history, initialize_yeti
 from app.utils.tool_calling.current_datetime import get_current_datetime
 from app.utils.tool_calling.get_weather import get_weather
 from app.utils.tool_calling.get_exchange_rates import get_exchange_rates
@@ -101,6 +101,11 @@ async def get_history_route(request: Request, thread_id: int = 1):
 @app.on_event("startup")
 async def startup_event():
     logger.info("🚀 Yeti Backend starting up...")
+    try:
+        await initialize_yeti()
+        logger.info("🏔️  Yeti Agent initialized successfully")
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize Yeti Agent: {e}", exc_info=True)
     logger.info("📡 WebSocket endpoint available at: ws://localhost:8000/ws")
 
 @app.on_event("shutdown")
