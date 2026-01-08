@@ -4,3 +4,5 @@ __pycache__
 .wav
 db
 tool_calling.ipynb
+.DS_Store
+slots

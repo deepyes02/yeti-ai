@@ -5,8 +5,11 @@ import logging
 
 @tool
 def get_exchange_rates(from_currency: str, to_currency: str):
-    """Get exchange rate for a given currency pair. Currently available source currency is USD to JPY and JPY to NPR, BDT, INR, PHP, IDR and VND."""
-    logging.warning(f"Function get exchange rate called")
+    """Get the current exchange rate between two currencies. Use 3-letter currency codes (e.g. JPY, USD, INR). 
+    Supports converting from Country Name to Currency Code if needed (e.g. "Japan" -> "JPY").
+    Primary supported currencies: JPY, USD, INR, NPR, BDT, IDR, PHP, VND."""
+    logger = logging.getLogger(__name__)
+    logger.info(f"💱 Getting exchange rate: {from_currency} → {to_currency}")
 
     # Input validation
     if not all(
@@ -17,6 +20,7 @@ def get_exchange_rates(from_currency: str, to_currency: str):
             isinstance(to_currency, str),
         ]
     ):
+        logger.warning(f"❌ Invalid currency input: {from_currency} → {to_currency}")
         return {"error": "Error: Please provide valid 'from' and 'to' currency codes."}
 
     EXCHANGE_JP = os.getenv("EXCHANGE_JP")
@@ -51,9 +55,14 @@ def get_exchange_rates(from_currency: str, to_currency: str):
                 rate["sender_currency"] == from_currency_upper
                 and rate["receiver_currency"] == to_currency_upper
             ):
-                summary = f"The exchange rate from {from_currency_upper} to {to_currency_upper} is {rate['receiver_unit']}."
+                summary = (
+                    f"The exchange rate from {from_currency_upper} to {to_currency_upper} is {rate['receiver_unit']}. "
+                    f"This data is provided by Smiles Mobile Remittance (https://www.smileswallet.com/japan/exchange-rates/)."
+                )
+                logger.info(f"✅ Exchange rate found: {from_currency_upper} → {to_currency_upper} = {rate['receiver_unit']}")
                 return {"summary": summary, "raw": exchange_rate_data}
 
+        logger.warning(f"⚠️  No exchange rate available for {from_currency_upper} → {to_currency_upper}")
         return {
             "error": f"Sorry, we don't have an exchange rate for {from_currency_upper} to {to_currency_upper}."
         }

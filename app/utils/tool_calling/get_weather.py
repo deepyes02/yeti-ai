@@ -9,11 +9,15 @@ import logging
 def get_weather(city: str) -> dict:
     """Get the weather for a given city with comprehensive error handling. Returns a dictionary with a summary string and raw weather data."""
     # Input validation
-    logging.warning(f"Function get weather called")
+    logger = logging.getLogger(__name__)
+    logger.info(f"🌤️  Getting weather for: {city}")
+    
     if not city or not isinstance(city, str):
+        logger.warning(f"❌ Invalid city input: {city}")
         return {"error": "Error: Please provide a valid city name."}
     city = city.strip()
     if not city:
+        logger.warning("❌ Empty city name provided")
         return {"error": "Error: City name cannot be empty."}
     # API key validation
     WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
@@ -39,6 +43,7 @@ def get_weather(city: str) -> dict:
                 condition = data["current"].get("condition", {}).get("text", "")
                 condition_icon = data["current"].get("condition", {}).get("icon", "")
 
+                logger.info(f"✅ Weather retrieved for {location}: {temp_c}°C, {condition}")
                 # Format response
                 return data
 
