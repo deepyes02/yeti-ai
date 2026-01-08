@@ -1,17 +1,27 @@
-# Yeti – Full-stack AI Agent
+# Yeti – Sovereign AI Agent Framework
+
+> **"Your Data, Your Rules, Your Infrastructure."**
+
+**Yeti** is a foundational framework for **Sovereign AI** development. Unlike standard API wrappers that leak data to third-party providers, Yeti is engineered to run **100% locally** (or on private clouds) while maintaining enterprise-grade capabilities.
 
 The Shipton Footprints (1951): Perhaps the most famous "evidence" ever found. British mountaineer Eric Shipton took photos of massive, humanoid tracks in the snow near Mount Everest. Each print was about 13 inches long and very wide. These photos sparked a "Yeti-mania" that lasted decades. 
 
 **`Mistral-Nemo`** 
 Mistral Nemo was good at reasoning and calling functions with less confusion.
+
+## 📄 Key Documentation
+- **[Sovereign AI Analysis](./SOVEREIGN_AI_ANALYSIS.md)**: Why Yeti is a technological differentiator in the Japanese market.
+- **[Infrastructure Roadmap](./INFRASTRUCTURE_ROADMAP.md)**: Strategy from local R&D (MacBook Pro) to Enterprise deployment (NVIDIA A6000/Cloud).
+- **[Changelog](./CHANGELOG.md)**: Latest updates and features.
+
 ---
 
 ### Tool Calling
 Currently the agent is able to:  
-1. Fetch weather for a given city.  
+1. Fetch weather for a given city (`WeatherAPI`).  
 2. Get the current date and time.  
-3. Fetching exchange rates
-4. Search and summarize results from the internet.  
+3. Fetch exchange rates (Powered by `Smiles Wallet`).
+4. Search and summarize results from the internet (`Tavily`).  
 
 ```python
 from langchain.agents import tool  
@@ -31,17 +41,19 @@ Hey, what's the price of labulu?
 ```
 
 
-## Needs more work here:
-1. Text embeddings and vector database for overcoming context limits.  
-2. Managing session and thread IDs / user logins.  
-3. Better search libaray for browsing the internet.
+## Roadmap & TODOs:
+1. **RAG (Retrieval Augmented Generation)**: Connect to vector DB for long-term memory.  
+2. **Multi-User Sessions**: Enhanced authentication.  
+3. [x] **Better Search**: Integrated Tavily for citation-backed web browsing.
 4. Voice controls (low priority).
 5. Image analysis (low priority).  
 ---
 
-## Architecture
-- **Host OS**: Runs `llama_cpp` inference (download llama_cpp, an AI model and serve from your OS).
-- **Docker**: Database, frontend and backend microservices in separate containers.
+## Architecture (Sovereign by Design)
+- **Model Engine**: Runs `llama_server` (GGUF) locally. No external inference API.
+- **Orchestration**: `LangGraph` for custom, cyclic agentic workflows.
+- **Persistence**: `PostgreSQL` container for data ownership.
+- **Microservices**: Dockerized `FastAPI` backend and `Next.js` frontend.
 ---
 
 ### Clone the Repository
