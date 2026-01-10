@@ -237,8 +237,13 @@ export default function Home() {
   const chatHook = useChat();
   const { messages, input, setInput, sendMessage, status, isBusy, setIsBusy, addMessage, setStatus } = chatHook;
 
+  const [isStarted, setIsStarted] = useState(false);
+
   const handleShortcut = async (type: string) => {
     if (isBusy) return;
+
+    // Reveal chat if it's the first time
+    if (!isStarted) setIsStarted(true);
 
     let prompt = "";
 
@@ -271,19 +276,29 @@ export default function Home() {
     sendMessage(undefined, prompt);
   };
 
-  // Auto-trigger introduction once on mount
-  const hasIntroduced = useRef(false);
+  if (!isStarted) {
+    return (
+      <div className={styles.introGate}>
+        <div className={styles.introCard}>
+          <div className={styles.introLogo}>
+            <h1>Yeti AI</h1>
+            <p>Intelligence from the snowy peaks</p>
+          </div>
 
-  useEffect(() => {
-    if (hasIntroduced.current) return;
+          <button
+            className={styles.introButton}
+            onClick={() => handleShortcut("introduction")}
+          >
+            🎤 Start Introduction
+          </button>
 
-    const timer = setTimeout(() => {
-      handleShortcut("introduction");
-      hasIntroduced.current = true;
-    }, 5000); // 5 seconds delay
-
-    return () => clearTimeout(timer);
-  }, []);
+          <div className={styles.introFooter}>
+            Sovereign • Local • Private
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.chatPageWrapper}>
@@ -307,6 +322,9 @@ export default function Home() {
             </button>
             <button disabled={isBusy} className={styles.shortcutButton} onClick={() => handleShortcut("shipton")}>
               👣 First Encounter
+            </button>
+            <button disabled={isBusy} className={styles.shortcutButton} onClick={() => handleShortcut("introduction")}>
+              🎤 Introduction
             </button>
           </div>
 
