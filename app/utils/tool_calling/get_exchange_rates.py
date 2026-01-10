@@ -1,3 +1,12 @@
+"""
+copyright (c) 2025-2026 Digital Wallet Corporation
+Parts of this code is written as research and development
+for DW Corporation.
+Their legal jurisdiction might apply to this code.
+Please reach out to the company before using this part of code in your
+project.
+https://digitalwallet.co.jp 
+"""
 from langchain.agents import tool
 import os, requests, json
 import logging

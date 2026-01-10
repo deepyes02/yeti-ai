@@ -1,3 +1,12 @@
+"""
+copyright (c) 2025-2026 Digital Wallet Corporation
+Parts of this code is written as research and development
+for DW Corporation. (See app/utils/tool_calling)
+Please reach out to the company before using this part of code in your
+project.
+https://digitalwallet.co.jp 
+"""
+
 # Yeti – Sovereign AI Agent Framework
 
 > **"Your Data, Your Rules, Your Infrastructure."**
