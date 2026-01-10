@@ -6,3 +6,4 @@ db
 tool_calling.ipynb
 .DS_Store
 slots
+models/

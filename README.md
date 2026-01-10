@@ -7,30 +7,23 @@ project.
 https://digitalwallet.co.jp 
 """
 
-# Yeti – Sovereign AI Agent Framework
-
-> **"Your Data, Your Rules, Your Infrastructure."**
+# Yeti – open-sourced AI Agent Framework
 
 **Yeti** is a foundational framework for **Sovereign AI** development. Unlike standard API wrappers that leak data to third-party providers, Yeti is engineered to run **100% locally** (or on private clouds) while maintaining enterprise-grade capabilities.
 
 The Shipton Footprints (1951): Perhaps the most famous "evidence" ever found. British mountaineer Eric Shipton took photos of massive, humanoid tracks in the snow near Mount Everest. Each print was about 13 inches long and very wide. These photos sparked a "Yeti-mania" that lasted decades. 
 
-**`Mistral-Nemo`** 
+**`Mistral-Nemo`**   
 Mistral Nemo was good at reasoning and calling functions with less confusion.
 
 ## 📄 Key Documentation
 - **[Sovereign AI Analysis](./SOVEREIGN_AI_ANALYSIS.md)**: Why Yeti is a technological differentiator in the Japanese market.
 - **[Infrastructure Roadmap](./INFRASTRUCTURE_ROADMAP.md)**: Strategy from local R&D (MacBook Pro) to Enterprise deployment (NVIDIA A6000/Cloud).
 - **[Changelog](./CHANGELOG.md)**: Latest updates and features.
-
 ---
 
 ### Tool Calling
-Currently the agent is able to:  
-1. Fetch weather for a given city (`WeatherAPI`).  
-2. Get the current date and time.  
-3. Fetch exchange rates (Powered by `Smiles Wallet`).
-4. Search and summarize results from the internet (`Tavily`).  
+=> Get date and time, fetch weather, exchange rates, & search-based knowledge etc. 
 
 ```python
 from langchain.agents import tool  
@@ -50,15 +43,12 @@ Hey, what's the price of labulu?
 ```
 
 
-## Roadmap & TODOs:
+## TO DO:  
 1. **RAG (Retrieval Augmented Generation)**: Connect to vector DB for long-term memory.  
 2. **Multi-User Sessions**: Enhanced authentication.  
-3. [x] **Better Search**: Integrated Tavily for citation-backed web browsing.
-4. Voice controls (low priority).
-5. Image analysis (low priority).  
 ---
 
-## Architecture (Sovereign by Design)
+## Architecture
 - **Model Engine**: Runs `llama_server` (GGUF) locally. No external inference API.
 - **Orchestration**: `LangGraph` for custom, cyclic agentic workflows.
 - **Persistence**: `PostgreSQL` container for data ownership.

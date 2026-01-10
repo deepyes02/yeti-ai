@@ -80,17 +80,17 @@ async def get_search_route(request: Request, q: str = "Digital Wallet Corporatio
     return {"result": result}
 
 @app.get("/api/history")
-async def get_history_route(request: Request, user: str = "default_user"):
+async def get_history_route(request: Request, thread_id: int = 1):
     """
-    Fetch conversation history for a given user from the database.
+    Fetch conversation history for a given thread_id from the database.
     Returns messages in the format expected by the frontend.
     """
     client_ip = request.client.host if request.client else "Unknown"
-    logger.info(f"📜 History request for user {user} from IP: {client_ip}")
+    logger.info(f"📜 History request for thread {thread_id} from IP: {client_ip}")
     
     try:
-        frontend_messages = await get_chat_history(user)
-        logger.info(f"✅ Returned {len(frontend_messages)} messages for user {user}")
+        frontend_messages = await get_chat_history(thread_id)
+        logger.info(f"✅ Returned {len(frontend_messages)} messages for thread {thread_id}")
         return {"messages": frontend_messages}
     except Exception as e:
         logger.error(f"❌ Error fetching history: {e}", exc_info=True)
@@ -115,17 +115,13 @@ async def shutdown_event():
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     client_id = id(websocket)
-    
-    # Extract user from query params
-    user_id = websocket.query_params.get("user", "default_user")
-    
     # Visual separator for new connection
     print("\n" + "=" * 60)
-    logger.info(f"🔌  NEW CONNECTION REQUEST | Client #{client_id} | User: {user_id}")
+    logger.info(f"🔌  NEW CONNECTION REQUEST | Client #{client_id}")
     print("=" * 60 + "\n")
     
     await websocket.accept()
-    logger.info(f"✅  CONNECTED | Client #{client_id} | User: {user_id} | Channel OPEN")
+    logger.info(f"✅  CONNECTED | Client #{client_id} | Channel OPEN")
     
     message_count = 0
     
@@ -136,7 +132,7 @@ async def websocket_endpoint(websocket: WebSocket):
             
             # Message received decoration
             print("\n" + "-" * 40)
-            logger.info(f"📨  MESSAGE #{message_count} RECEIVED | Client #{client_id} | User: {user_id}")
+            logger.info(f"📨  MESSAGE #{message_count} RECEIVED | Client #{client_id}")
             logger.info(f"📝  PROMPT:  '{prompt[:100]}'{'...' if len(prompt) > 100 else ''}")
             print("-" * 40 + "\n")
             
@@ -147,7 +143,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 start_time = datetime.now()
                 
                 # Natively await the async generator for minimum latency
-                async for obj in stream_model_output_new(prompt, thread_id=user_id):
+                async for obj in stream_model_output_new(prompt):
                     chunk_count += 1
                     await websocket.send_text(json.dumps(obj))
                     

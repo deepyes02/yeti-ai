@@ -199,7 +199,7 @@ async def stream_model_output_new(prompt: str, thread_id: str = "default_user"):
     print("#" * 50 + "\n")
 
 
-async def get_chat_history(thread_id: str):
+async def get_chat_history(thread_id: int):
     """
     Fetch conversation history for a given thread_id from the database.
     Returns messages in the format expected by the frontend.
